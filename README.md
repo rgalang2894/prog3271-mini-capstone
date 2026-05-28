@@ -1,4 +1,5 @@
 Plant Planner
+Name: Sproutly
 
 Galang, Revienne Felipe
 Jaiyeola, David
