@@ -1,0 +1,41 @@
+PAGES:
+login page
+homepage - dashboard
+catalog page - list of plants
+details page - details of each plants
+store locator - maps page
+notification page - reminders / care tips
+settings
+user account - user profile page
+
+----------------------------------------
+
+DATABASE:
+mysql
+
+tables:
+plants
+ -- plant_id
+ -- name
+ -- botanical_name
+ -- description
+ -- 
+
+store
+ -- store_id
+ -- store_name
+ -- store_address
+ -- contact_number
+ -- store_hours
+
+user
+ -- user_id
+ -- first_name
+ -- last_name
+ -- email_address
+
+----------------------------------------
+
+ROUTES
+
+
