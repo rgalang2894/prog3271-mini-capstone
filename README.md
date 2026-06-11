@@ -20,5 +20,10 @@ dashboard --> index.html
 GIT REPO:
 https://github.com/rgalang2894/prog3271-mini-capstone
 
+Milestone #2
+API Routes planned out, 4 new folders under SRC containing one typescript file each (all for handling user related routes). Each one of the new files has psuedo code just to act as a placeholder for demonstration before connecting our MySQL database.
 
-
+ROLES/TASKS (MILESTONE #2)
+Vidmar, Stryfe - API Route Planner
+Jaiyeola, David - Database Design
+Galang, Revienne Felipe – Frontend Designer (UI and Navigation Planner and Wireframe designer)

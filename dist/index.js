@@ -10,9 +10,9 @@ const PORT = 3000;
 app.use(express_1.default.static("public"));
 // fake database
 const users = [
-    { id: 1, name: "Alice" },
-    { id: 2, name: "Bob" },
-    { id: 3, name: "Charlie" },
+    { id: 1, name: "Snake Plant (Sansevieria trifasciata)" },
+    { id: 2, name: "ZZ Plant (Zamioculcas zamiifolia)" },
+    { id: 3, name: "Pothos (Epipremnum aurem)" },
 ];
 // API route
 app.get("/users", (req, res) => {
