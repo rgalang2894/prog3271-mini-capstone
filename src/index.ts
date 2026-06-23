@@ -5,8 +5,7 @@ import cors from "cors";
 // Each file exports a Router with its own set of endpoints.
 import userRoutes from "./routes/userRoutes";
 import userPlantRoutes from "./routes/userPlantRoutes"
-import plantCatalogueRoutes from "./routes/plantCatalogueRoutes"
-import remindersRoutes from "./routes/remindersRoutes"
+
 
 
 // Create the Express application.
@@ -30,8 +29,7 @@ app.use(express.json());
 //
 app.use("/users", userRoutes);
 app.use("/user-plants", userPlantRoutes);
-app.use("/plant-catalogue", plantCatalogueRoutes);
-app.use("/reminders", remindersRoutes);
+
 
 
 // ─── START SERVER ─────────────────────────────────────
