@@ -9,6 +9,8 @@ const cors_1 = __importDefault(require("cors"));
 // Each file exports a Router with its own set of endpoints.
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const userPlantRoutes_1 = __importDefault(require("./routes/userPlantRoutes"));
+const reminderRoutes_1 = __importDefault(require("./routes/reminderRoutes"));
+const favoriteRoutes_1 = __importDefault(require("./routes/favoriteRoutes"));
 // Create the Express application.
 const app = (0, express_1.default)();
 // ─── MIDDLEWARE ────────────────────────────────────────
@@ -28,6 +30,8 @@ app.use(express_1.default.json());
 //
 app.use("/users", userRoutes_1.default);
 app.use("/user-plants", userPlantRoutes_1.default);
+app.use("/reminders", reminderRoutes_1.default);
+app.use("/favorites", favoriteRoutes_1.default);
 // ─── START SERVER ─────────────────────────────────────
 app.listen(3001, () => {
     console.log("Server running on http://localhost:3001");
