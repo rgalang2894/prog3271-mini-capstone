@@ -8,6 +8,7 @@ import userPlantRoutes from "./routes/userPlantRoutes"
 
 import reminderRoutes from "./routes/reminderRoutes";
 import favoriteRoutes from "./routes/favoriteRoutes";
+import plantCatalogRoutes from "./routes/plantCatalogRoutes"
 
 
 // Create the Express application.
@@ -33,6 +34,7 @@ app.use("/users", userRoutes);
 app.use("/user-plants", userPlantRoutes);
 app.use("/reminders", reminderRoutes);
 app.use("/favorites", favoriteRoutes);
+app.use("/plant-catalog" , plantCatalogRoutes)
 
 
 

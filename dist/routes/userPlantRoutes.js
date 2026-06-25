@@ -1,7 +1,7 @@
 "use strict";
 // ─────────────────────────────────────────────────────────
-//  USER ROUTES
-//  This file handles ALL endpoints related to users.
+//  USER PLANTS ROUTES
+//  This file handles ALL endpoints related to users_plants.
 //  It uses express.Router() instead of the main app.
 // ─────────────────────────────────────────────────────────
 var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -17,10 +17,10 @@ const db_1 = __importDefault(require("../db"));
 // Create a new Router instance.
 // This works exactly like "app" but is designed to be plugged into the main app later.
 const router = (0, express_1.Router)();
-// ─── GET /  →  Get all users ──────────────────────────
+// ─── GET /  →  Get all users_pants ──────────────────────────
 // Notice: we write "/" not "/users".
-// The "/users" prefix will be added in index.ts when we register this router.
-// So "/" here becomes "/users" in the final API.
+// The "/users-plants" prefix will be added in index.ts when we register this router.
+// So "/" here becomes "/users-plants" in the final API.
 router.get("/", async (_req, res) => {
     // Query the database for all users.
     const [rows] = await db_1.default.query("SELECT * FROM user_plants");

@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   port: 3306,
   user: "root",             // your MySQL username
   password: "",              // your MySQL password
-  database: "",     // the database we created above
+  database: "sproutly_app_db",     // the database we created above
 });
 
 // Export the pool so other files can import it:

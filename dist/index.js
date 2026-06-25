@@ -11,6 +11,7 @@ const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const userPlantRoutes_1 = __importDefault(require("./routes/userPlantRoutes"));
 const reminderRoutes_1 = __importDefault(require("./routes/reminderRoutes"));
 const favoriteRoutes_1 = __importDefault(require("./routes/favoriteRoutes"));
+const plantCatalogRoutes_1 = __importDefault(require("./routes/plantCatalogRoutes"));
 // Create the Express application.
 const app = (0, express_1.default)();
 // ─── MIDDLEWARE ────────────────────────────────────────
@@ -32,6 +33,7 @@ app.use("/users", userRoutes_1.default);
 app.use("/user-plants", userPlantRoutes_1.default);
 app.use("/reminders", reminderRoutes_1.default);
 app.use("/favorites", favoriteRoutes_1.default);
+app.use("/plant-catalog", plantCatalogRoutes_1.default);
 // ─── START SERVER ─────────────────────────────────────
 app.listen(3001, () => {
     console.log("Server running on http://localhost:3001");

@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────
-//  USER ROUTES
-//  This file handles ALL endpoints related to users.
+//  USER PLANTS ROUTES
+//  This file handles ALL endpoints related to users_plants.
 //  It uses express.Router() instead of the main app.
 // ─────────────────────────────────────────────────────────
 
@@ -16,10 +16,10 @@ import pool from "../db";
 // This works exactly like "app" but is designed to be plugged into the main app later.
 const router = Router();
 
-// ─── GET /  →  Get all users ──────────────────────────
+// ─── GET /  →  Get all users_pants ──────────────────────────
 // Notice: we write "/" not "/users".
-// The "/users" prefix will be added in index.ts when we register this router.
-// So "/" here becomes "/users" in the final API.
+// The "/users-plants" prefix will be added in index.ts when we register this router.
+// So "/" here becomes "/users-plants" in the final API.
 router.get("/", async (_req: Request, res: Response) => {
   // Query the database for all users.
   const [rows] = await pool.query("SELECT * FROM user_plants");
