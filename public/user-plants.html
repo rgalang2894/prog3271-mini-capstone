@@ -31,6 +31,9 @@
         <label for="last_watered">Last Watered</label>
         <input id="last_watered" name="last_watered" type="date" />
 
+        <label for="image">Image</label>
+        <input id="image" name="image" type="file" accept="image/*" />
+
         <button type="submit">Save Plant</button>
       </form>
 
@@ -45,6 +48,7 @@
       const customNameInput = document.querySelector("#custom_name");
       const locationInput = document.querySelector("#location");
       const lastWateredInput = document.querySelector("#last_watered");
+      const imageInput = document.querySelector("#image");
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -54,7 +58,8 @@
           catalog_id: Number(catalogIdInput.value),
           custom_name: customNameInput.value,
           location: locationInput.value,
-          last_watered: lastWateredInput.value
+          last_watered: lastWateredInput.value,
+          image: imageInput.files && imageInput.files[0] ? imageInput.files[0].name : null
         };
 
         messageBox.className = "message";

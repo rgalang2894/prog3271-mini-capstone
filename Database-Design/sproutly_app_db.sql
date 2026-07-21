@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `user_plants` (
   `custom_name` VARCHAR(100) NOT NULL,
   `location` ENUM("Living Room", "Balcony", "Kitchen", "Bedroom") NULL,
   `last_watered` DATE NULL,
+  `image` VARCHAR(255) NULL,
   `date_added` TIMESTAMP(6) NULL DEFAULT CURRENT_TIMESTAMP(6),
   PRIMARY KEY (`id`),
   INDEX `_idx1` (`catalog_id` ASC) VISIBLE,
