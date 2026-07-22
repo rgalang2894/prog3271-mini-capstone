@@ -16,6 +16,11 @@ Galang, Revienne Felipe - Git manager
 
 ROUTES:
 dashboard --> index.html
+userRoutes
+userPlantsRoutes
+plantCatalogueRoutes
+reminderRoutes
+favoritesRoutes
 
 GIT REPO:
 https://github.com/rgalang2894/prog3271-mini-capstone

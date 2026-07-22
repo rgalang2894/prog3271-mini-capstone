@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sproutly - Add Plant</title>
+    <link rel="stylesheet" href="/user-plants.css" />
+  </head>
+  <body>
+    <div class="card">
+      <h1>Add a User Plant</h1>
+      <p>Use this form to add a plant to your personal collection.</p>
+
+      <form id="user-plant-form">
+        <label for="user_id">User ID</label>
+        <input id="user_id" name="user_id" type="number" value="1" required />
+
+        <label for="catalog_id">Catalog ID</label>
+        <input
+          id="catalog_id"
+          name="catalog_id"
+          type="number"
+          value="1"
+          required
+        />
+
+        <label for="plant_id">Plant ID to Delete</label>
+        <input id="plant_id" name="plant_id" type="number" min="1" />
+
+        <label for="custom_name">Plant Name</label>
+        <input
+          id="custom_name"
+          name="custom_name"
+          type="text"
+          placeholder="e.g. Sunny"
+          required
+        />
+
+        <label for="location">Location</label>
+        <select id="location" name="location">
+          <option value="Living Room">Living Room</option>
+          <option value="Balcony">Balcony</option>
+          <option value="Kitchen">Kitchen</option>
+        </select>
+
+        <label for="last_watered">Last Watered</label>
+        <input id="last_watered" name="last_watered" type="date" />
+
+        <label for="image">Image</label>
+        <input id="image" name="image" type="file" accept="image/*" />
+
+        <button type="submit">Save Plant</button>
+
+        <button type="button" id="delete-button">Delete Plant</button>
+      </form>
+
+      <div id="message" class="message"></div>
+    </div>
+
+    <script>
+      const form = document.querySelector("#user-plant-form");
+      const deleteButton = document.querySelector("#delete-button");
+      const messageBox = document.querySelector("#message");
+      const userIdInput = document.querySelector("#user_id");
+      const catalogIdInput = document.querySelector("#catalog_id");
+      const plantIdInput = document.querySelector("#plant_id");
+      const customNameInput = document.querySelector("#custom_name");
+      const locationInput = document.querySelector("#location");
+      const lastWateredInput = document.querySelector("#last_watered");
+      const imageInput = document.querySelector("#image");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const payload = {
+          user_id: Number(userIdInput.value),
+          catalog_id: Number(catalogIdInput.value),
+          custom_name: customNameInput.value,
+          location: locationInput.value,
+          last_watered: lastWateredInput.value,
+          image:
+            imageInput.files && imageInput.files[0]
+              ? imageInput.files[0].name
+              : null,
+        };
+
+        messageBox.className = "message";
+        messageBox.style.display = "none";
+
+        try {
+          const response = await fetch("/user-plants", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            messageBox.className = "message success";
+            messageBox.textContent = "Plant saved successfully!";
+            messageBox.style.display = "block";
+            form.reset();
+          } else {
+            messageBox.className = "message error";
+            messageBox.textContent = data.message || "Failed to save plant.";
+            messageBox.style.display = "block";
+          }
+        } catch (error) {
+          messageBox.className = "message error";
+          messageBox.textContent = "Something went wrong.";
+          messageBox.style.display = "block";
+        }
+      });
+
+      // Delete plant function
+      deleteButton.addEventListener("click", async () => {
+        const plantId = Number(plantIdInput.value);
+
+        // Validate plant ID
+        if (!Number.isInteger(plantId) || plantId < 1) {
+          messageBox.className = "message error";
+          messageBox.textContent = "Enter a valid plant ID to delete.";
+          messageBox.style.display = "block";
+          return;
+        }
+
+        // Confirm plant deletion
+        if (!window.confirm(`Delete plant ${plantId}?`)) {
+          return;
+        }
+
+        // Send DELETE request to database
+        try {
+          const response = await fetch(`/user-plants/${plantId}`, {
+            method: "DELETE",
+          });
+
+          const data = await response.json();
+
+          // Display success or error based on response
+          if (response.ok) {
+            messageBox.className = "message success";
+            messageBox.textContent =
+              data.message || "Plant deleted successfully!";
+            plantIdInput.value = "";
+          } else {
+            messageBox.className = "message error";
+            messageBox.textContent = data.error || "Failed to delete plant.";
+          }
+        } catch (error) {
+          messageBox.className = "message error";
+          messageBox.textContent =
+            "Something went wrong while deleting the plant.";
+        }
+
+        messageBox.style.display = "block";
+      });
+    </script>
+  </body>
+</html>

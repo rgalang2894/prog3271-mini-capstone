@@ -1,24 +1,7 @@
-import express from "express";
+import app from "./app";
 
-const app = express();
-
-const PORT = 3000;
-
-// allow browser access to public folder
-app.use(express.static("public"));
-
-// fake database
-const users = [
-  { id: 1, name: "Alice" },
-  { id: 2, name: "Bob" },
-  { id: 3, name: "Charlie" },
-];
-
-// API route
-app.get("/users", (req, res) => {
-  res.json(users);
-});
+const PORT = 3001;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
