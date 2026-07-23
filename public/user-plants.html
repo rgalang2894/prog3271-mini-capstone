@@ -24,9 +24,6 @@
           required
         />
 
-        <label for="plant_id">Plant ID to Delete</label>
-        <input id="plant_id" name="plant_id" type="number" min="1" />
-
         <label for="custom_name">Plant Name</label>
         <input
           id="custom_name"
@@ -50,11 +47,38 @@
         <input id="image" name="image" type="file" accept="image/*" />
 
         <button type="submit">Save Plant</button>
+      </form>
+
+      <div id="message" class="message"></div>
+    </div>
+
+    <div class="card">
+      <h1>Delete a User Plant</h1>
+      <p>Use this form to delete a plant from your personal collection.</p>
+
+      <form id="user-plant-form">
+        <label for="user_id">User ID</label>
+        <input id="user_id" name="user_id" type="number" value="1" required />
+
+        <label for="catalog_id">Catalog ID</label>
+        <input
+          id="catalog_id"
+          name="catalog_id"
+          type="number"
+          value="1"
+          required
+        />
+
+        <label for="plant_id">Plant ID to Delete</label>
+        <input id="plant_id" name="plant_id" type="number" min="1" />
+
+        <label for="image">Image</label>
+        <input id="image" name="image" type="file" accept="image/*" />
 
         <button type="button" id="delete-button">Delete Plant</button>
       </form>
 
-      <div id="message" class="message"></div>
+      <div id="message1" class="message1"></div>
     </div>
 
     <script>
@@ -113,7 +137,12 @@
         }
       });
 
+      // STRYFES SECTION
       // Delete plant function
+
+      messageBox.className = "message1";
+      messageBox.style.display = "none";
+
       deleteButton.addEventListener("click", async () => {
         const plantId = Number(plantIdInput.value);
 
@@ -140,18 +169,18 @@
 
           // Display success or error based on response
           if (response.ok) {
-            messageBox.className = "message success";
+            messageBox.className = "success";
             messageBox.textContent =
               data.message || "Plant deleted successfully!";
             plantIdInput.value = "";
           } else {
-            messageBox.className = "message error";
-            messageBox.textContent = data.error || "Failed to delete plant.";
+            messageBox.className = "error";
+            messageBox.textContent =
+              data.error || "Failed to delete selected plant.";
           }
         } catch (error) {
-          messageBox.className = "message error";
-          messageBox.textContent =
-            "Something went wrong while deleting the plant.";
+          messageBox.className = "error";
+          messageBox.textContent = "Something went wrong.";
         }
 
         messageBox.style.display = "block";

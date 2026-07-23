@@ -9,7 +9,9 @@ export declare const addUserPlant: (
 ) => Promise<void>;
 //# sourceMappingURL=userPlantController.d.ts.map
 
+// STRYFES SECTION
 // ADD DELETE FUNCTION HERE THAT DELETES FROM DATABASE WITH ERROR HANDLING
+// Delete a user plant by ID with express architecture
 export declare const deleteUserPlant: (
   req: Request,
   res: Response,

@@ -4,11 +4,12 @@ import mysql from "mysql2/promise";
 // A pool keeps multiple connections open and reuses them.
 // This is more efficient than opening a new connection for every query.
 const pool = mysql.createPool({
-  host: "localhost",       // where MySQL is running
+  host: "localhost", // where MySQL is running
   port: 3306,
-  user: "root",             // your MySQL username
-  password: "",              // your MySQL password
-  database: "sproutly_app_db",     // the database we created above
+  user: "root", // your MySQL username
+  // Stryfes SQL password, change accordingly!
+  password: "332547991", // your MySQL password
+  database: "sproutly_app_db", // the database we created above
 });
 
 // Export the pool so other files can import it:

@@ -18,5 +18,7 @@ export declare const createUserPlant: (payload: UserPlantInput) => Promise<{
 }>;
 //# sourceMappingURL=userPlantModel.d.ts.map
 
-// DELETE FUNCTION THAT DELETES FROM DATABASE WITH ERROR HANDLING
+// STRYFES SECTION
+// Delete a user plant by ID
+// Exports a function that deletes a user plant by ID from the database. ID is taken as a parameter and the function returns a promise that resolces when this function is completed.
 export declare const deleteUserPlant: (id: number) => Promise<void>;
