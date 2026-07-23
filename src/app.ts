@@ -21,6 +21,9 @@ app.get("/add-user-plant", (_req, res) => {
   res.sendFile(path.join(publicDir, "user-plants.html"));
 });
 
+app.get("/update-user-plant", (_req, res) => {
+  res.sendFile(path.join(publicDir, "update-user-plant.html"));
+});
 
 app.use("/users", userRoutes);
 app.use("/user-plants", userPlantRoutes);

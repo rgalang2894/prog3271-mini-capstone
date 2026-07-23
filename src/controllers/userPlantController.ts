@@ -6,7 +6,8 @@ export const getUserPlants = async (_req: Request, res: Response) => {
     const userPlants = await findAllUserPlants();
     res.json(userPlants);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch user plants" });
+    console.error(error);
+    res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch user plants" });
   }
 };
 
@@ -30,7 +31,8 @@ export const addUserPlant = async (req: Request, res: Response) => {
 
     res.status(201).json(newPlant);
   } catch (error) {
-    res.status(500).json({ error: "Failed to add a new plant to your garden." });
+    console.error(error);
+    res.status(500).json({ error: error instanceof Error ? error.message : "Failed to add a new plant to your garden." });
   }
 };
 

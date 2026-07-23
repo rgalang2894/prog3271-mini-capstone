@@ -6,6 +6,7 @@ export const getReminders = async (_req: Request, res: Response) => {
     const reminders = await findAllReminders();
     res.json(reminders);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch reminders" });
+    console.error(error);
+    res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch reminders" });
   }
 };

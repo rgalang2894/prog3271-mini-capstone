@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sproutly - Update Plant</title>
+    <link rel="stylesheet" href="/user-plants.css" />
+  </head>
+  <body>
+    <div class="card">
+      <h1>Update a User Plant</h1>
+      <p>Enter the plant ID and update one or more fields.</p>
+
+      <form id="update-plant-form">
+        <label for="plant_id">Plant ID</label>
+        <input id="plant_id" name="plant_id" type="number" required />
+
+        <label for="custom_name">Plant Name</label>
+        <input id="custom_name" name="custom_name" type="text" placeholder="e.g. Sunny" />
+
+        <label for="location">Location</label>
+        <select id="location" name="location">
+          <option value="">-- choose location --</option>
+          <option value="Living Room">Living Room</option>
+          <option value="Balcony">Balcony</option>
+          <option value="Kitchen">Kitchen</option>
+          <option value="Office">Office</option>
+          <option value="Window">Window</option>
+        </select>
+
+        <label for="last_watered">Last Watered</label>
+        <input id="last_watered" name="last_watered" type="date" />
+
+        <label for="image">Image</label>
+        <input id="image" name="image" type="text" placeholder="image filename or URL" />
+
+        <button type="submit">Update Plant</button>
+      </form>
+
+      <div id="message" class="message"></div>
+      <pre id="result" class="message" style="white-space: pre-wrap;"></pre>
+    </div>
+
+    <script>
+      const form = document.querySelector("#update-plant-form");
+      const messageBox = document.querySelector("#message");
+      const resultBox = document.querySelector("#result");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const plantId = Number(document.querySelector("#plant_id").value);
+        const customName = document.querySelector("#custom_name").value;
+        const location = document.querySelector("#location").value;
+        const lastWatered = document.querySelector("#last_watered").value;
+        const image = document.querySelector("#image").value;
+
+        const payload = {};
+        if (customName) payload.custom_name = customName;
+        if (location) payload.location = location;
+        if (lastWatered) payload.last_watered = lastWatered;
+        if (image) payload.image = image;
+
+        if (Object.keys(payload).length === 0) {
+          messageBox.className = "message error";
+          messageBox.textContent = "Please enter at least one field to update.";
+          messageBox.style.display = "block";
+          return;
+        }
+
+        try {
+          const response = await fetch(`/user-plants/${plantId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            messageBox.className = "message success";
+            messageBox.textContent = "Plant updated successfully.";
+            messageBox.style.display = "block";
+            resultBox.textContent = JSON.stringify(data, null, 2);
+          } else {
+            messageBox.className = "message error";
+            messageBox.textContent = data.error || "Failed to update plant.";
+            messageBox.style.display = "block";
+            resultBox.textContent = JSON.stringify(data, null, 2);
+          }
+        } catch (error) {
+          messageBox.className = "message error";
+          messageBox.textContent = "Unable to send the update request.";
+          messageBox.style.display = "block";
+          resultBox.textContent = String(error);
+        }
+      });
+    </script>
+  </body>
+</html>

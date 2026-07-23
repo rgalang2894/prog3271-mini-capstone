@@ -6,6 +6,7 @@ export const getPlantCatalog = async (_req: Request, res: Response) => {
     const plantCatalog = await findAllPlantCatalogItems();
     res.json(plantCatalog);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch plant catalog" });
+    console.error(error);
+    res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch plant catalog" });
   }
 };
