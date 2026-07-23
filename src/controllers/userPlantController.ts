@@ -85,24 +85,38 @@ export const editUserPlant = async (req: Request, res: Response) => {
   }
 };
 
+// STRYFES SECTION
+// Add the delete function here that deletes a specific plant from the database with error handling
 export const removeUserPlant = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
 
+    // Check if the provided ID is a valid integer (throw an error if it's not a number))
     if (!Number.isInteger(id)) {
       res.status(400).json({ error: "Valid plant ID is required" });
       return;
     }
 
+    // Check if the provided ID is a positive integer
+    if (id <= 0) {
+      res.status(400).json({ error: "Plant ID must be a positive integer" });
+      return;
+    }
+
+    // Call the delete function from the model to then delete it from the database
     const deletedPlant = await deleteUserPlant(id);
 
+    // If the plant was NOT found in the database, throw a 404 error
     if (!deletedPlant) {
       res.status(404).json({ error: "User plant not found" });
       return;
     }
 
+    // If the delete function was successful throw a success message along with the ID of the deleted plant
+    // Status 200
     res.json({ message: "User plant deleted successfully", id });
   } catch (error) {
+    // Error catch if the delete function fails
     res.status(500).json({ error: "Failed to delete the user plant" });
   }
 };
