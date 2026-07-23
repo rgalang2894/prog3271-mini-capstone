@@ -3,24 +3,24 @@ How to check that the delete API works in the backend step by step:
 2. Ensure MySQL database containing sproutly_app_db is up and running
 3. Open a new powershell terminal and input the following to create then delete a temporary plant
 4. $body = @{
->>   user_id = 1
->>   catalog_id = 1
->>   custom_name = "Delete API Test"
->>   location = "Living Room"
->>   last_watered = $null
->>   image = $null
->> } | ConvertTo-Json
+  user_id = 1
+  catalog_id = 1
+  custom_name = "Delete API Test"
+  location = "Living Room"
+  last_watered = $null
+  image = $null
+} | ConvertTo-Json
 5. $plant = Invoke-RestMethod `
->>   -Method Post `
->>   -Uri "http://localhost:3001/user-plants" `
->>   -ContentType "application/json" `
->>   -Body $body
+  -Method Post `
+  -Uri "http://localhost:3001/user-plants" `
+  -ContentType "application/json" `
+  -Body $body
 6. $plant
-7.  $deleted = Invoke-RestMethod `
->>   -Method Delete `
->>   -Uri "http://localhost:3001/user-plants/$($plant.id)"
-
-You should finally see the message "User plant deleted successfully" ID = 4. 
+7. $deleted = Invoke-RestMethod `
+  -Method Delete `
+  -Uri "http://localhost:3001/user-plants/$($plant.id)"
+8. $deleted
+You should finally see the message "User plant deleted successfully" ID = whatever ID. 
 
 To get your 400 series series errors going up. You can view some of these within the userPlantController.ts page.
 1. 400 (Bad Request) 
