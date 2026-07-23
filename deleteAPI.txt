@@ -22,7 +22,7 @@ How to check that the delete API works in the backend step by step:
 8. $deleted
 You should finally see the message "User plant deleted successfully" ID = whatever ID. 
 
-To get your 400 series series errors going up. You can view some of these within the userPlantController.ts page.
+To get you numbered errors ascending. You can view some of these within the userPlantController.ts page.
 1. 400 (Bad Request) 
 try {
   Invoke-RestMethod `
