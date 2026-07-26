@@ -25,5 +25,11 @@ favoritesRoutes
 GIT REPO:
 https://github.com/rgalang2894/prog3271-mini-capstone
 
+Milestone 4
+userPlant CRUD and Error Handling
+Create - Revienne Galang
+Update - David Jaiyeola
+Delete - Stryfe Vidmar
+
 
 

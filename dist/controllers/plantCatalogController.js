@@ -8,7 +8,8 @@ const getPlantCatalog = async (_req, res) => {
         res.json(plantCatalog);
     }
     catch (error) {
-        res.status(500).json({ error: "Failed to fetch plant catalog" });
+        console.error(error);
+        res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch plant catalog" });
     }
 };
 exports.getPlantCatalog = getPlantCatalog;

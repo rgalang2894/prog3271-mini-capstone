@@ -8,7 +8,8 @@ const getFavorites = async (_req, res) => {
         res.json(favorites);
     }
     catch (error) {
-        res.status(500).json({ error: "Failed to fetch favorites" });
+        console.error(error);
+        res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch favorites" });
     }
 };
 exports.getFavorites = getFavorites;

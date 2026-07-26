@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUserPlant = exports.getUserPlants = void 0;
+exports.editUserPlant = exports.addUserPlant = exports.getUserPlants = void 0;
 const userPlantModel_1 = require("../models/userPlantModel");
 const getUserPlants = async (_req, res) => {
     try {
@@ -8,13 +8,14 @@ const getUserPlants = async (_req, res) => {
         res.json(userPlants);
     }
     catch (error) {
-        res.status(500).json({ error: "Failed to fetch user plants" });
+        console.error(error);
+        res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch user plants" });
     }
 };
 exports.getUserPlants = getUserPlants;
 const addUserPlant = async (req, res) => {
     try {
-        const { user_id, catalog_id, custom_name, location, last_watered } = req.body;
+        const { user_id, catalog_id, custom_name, location, last_watered, image } = req.body;
         if (!user_id || !custom_name) {
             res.status(400).json({ error: "UserID and Custom Name are required" });
             return;
@@ -25,12 +26,41 @@ const addUserPlant = async (req, res) => {
             custom_name,
             location: location ?? null,
             last_watered: last_watered ?? null,
+            image: image ?? null,
         });
         res.status(201).json(newPlant);
     }
     catch (error) {
-        res.status(500).json({ error: "Failed to add a new plant to your garden." });
+        console.error(error);
+        res.status(500).json({ error: error instanceof Error ? error.message : "Failed to add a new plant to your garden." });
     }
 };
 exports.addUserPlant = addUserPlant;
+const editUserPlant = async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+        if (!Number.isInteger(id)) {
+            res.status(400).json({ error: "Valid plant ID is required" });
+            return;
+        }
+        const allowedFields = ["user_id", "catalog_id", "custom_name", "location", "last_watered", "image"];
+        const updates = Object.fromEntries(allowedFields
+            .filter((field) => req.body[field] !== undefined)
+            .map((field) => [field, req.body[field]]));
+        if (Object.keys(updates).length === 0) {
+            res.status(400).json({ error: "At least one valid field must be provided to update" });
+            return;
+        }
+        const updatedPlant = await (0, userPlantModel_1.updateUserPlant)(id, updates);
+        if (!updatedPlant) {
+            res.status(404).json({ error: "User plant not found" });
+            return;
+        }
+        res.json(updatedPlant);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Failed to update the user plant" });
+    }
+};
+exports.editUserPlant = editUserPlant;
 //# sourceMappingURL=userPlantController.js.map

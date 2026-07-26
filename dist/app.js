@@ -18,6 +18,9 @@ app.use(express_1.default.static(publicDir));
 app.get("/add-user-plant", (_req, res) => {
     res.sendFile(path_1.default.join(publicDir, "user-plants.html"));
 });
+app.get("/update-user-plant", (_req, res) => {
+    res.sendFile(path_1.default.join(publicDir, "update-user-plant.html"));
+});
 app.use("/users", userRoutes_1.default);
 app.use("/user-plants", userPlantRoutes_1.default);
 app.use("/reminders", reminderRoutes_1.default);

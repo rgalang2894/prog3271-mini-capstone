@@ -1,1 +1,1 @@
-{"version":3,"file":"plantCatalogController.d.ts","sourceRoot":"","sources":["../../src/controllers/plantCatalogController.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAG5C,eAAO,MAAM,eAAe,GAAU,MAAM,OAAO,EAAE,KAAK,QAAQ,kBAOjE,CAAC"}
+{"version":3,"file":"plantCatalogController.d.ts","sourceRoot":"","sources":["../../src/controllers/plantCatalogController.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAG5C,eAAO,MAAM,eAAe,GAAU,MAAM,OAAO,EAAE,KAAK,QAAQ,kBAQjE,CAAC"}

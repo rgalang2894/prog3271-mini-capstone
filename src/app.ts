@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(publicDir));
 
+
 app.get("/add-user-plant", (_req, res) => {
   res.sendFile(path.join(publicDir, "user-plants.html"));
 });
