@@ -34,7 +34,7 @@
         text-align: center;
       }
 
-      .plant-icon {
+      .splash-plant-icon {
         width: 90px;
         height: 90px;
         margin: 0 auto 18px;
@@ -51,9 +51,10 @@
         margin: 0 0 10px;
         font-size: 2rem;
         color: var(--green-700);
+        text-align: center;
       }
 
-      .subtitle {
+      .splash-subtitle {
         margin: 0 0 24px;
         color: var(--muted);
         line-height: 1.6;
@@ -73,6 +74,7 @@
         font-weight: 600;
         cursor: pointer;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+        margin-top: 6px;
       }
 
       button:hover {
@@ -85,7 +87,7 @@
         box-shadow: 0 8px 18px rgba(75, 143, 103, 0.25);
       }
 
-      .signup-btn {
+      .splash-signup-btn {
         background: var(--green-100);
         color: var(--green-700);
         border: 1px solid var(--green-200);
@@ -95,4 +97,83 @@
         margin-top: 18px;
         font-size: 0.95rem;
         color: var(--muted);
+        text-align: center;
       }
+
+
+/** LOGIN PAGE*/  
+
+      .auth-card {
+        width: 100%;
+        max-width: 420px;
+        background: white;
+        border-radius: 24px;
+        padding: 32px 28px;
+        box-shadow: 0 18px 40px rgba(47, 107, 79, 0.16);
+      }
+
+      .plant-icon {
+        width: 82px;
+        height: 82px;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--green-100), var(--green-200));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+      }
+
+      .subtitle {
+        margin: 0 0 24px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--green-700);
+      }
+
+      input {
+        border: 1px solid var(--green-200);
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 1rem;
+        color: var(--text);
+        outline: none;
+      }
+
+      input:focus {
+        border-color: var(--green-500);
+        box-shadow: 0 0 0 3px rgba(111, 191, 127, 0.16);
+      }
+
+
+      .footer-text a {
+        color: var(--green-700);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+/** SIGN UP*/
+
+      .signup-btn {
+        background: linear-gradient(90deg, var(--green-600), var(--green-500));
+        color: white;
+        box-shadow: 0 8px 18px rgba(75, 143, 103, 0.25);
+      }
+
