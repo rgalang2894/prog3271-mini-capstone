@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config();
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
+const auth_1 = __importDefault(require("./middleware/auth"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const userPlantRoutes_1 = __importDefault(require("./routes/userPlantRoutes"));
 const reminderRoutes_1 = __importDefault(require("./routes/reminderRoutes"));
@@ -23,9 +24,9 @@ app.get("/update-user-plant", (_req, res) => {
     res.sendFile(path_1.default.join(publicDir, "update-user-plant.html"));
 });
 app.use("/users", userRoutes_1.default);
-app.use("/user-plants", userPlantRoutes_1.default);
-app.use("/reminders", reminderRoutes_1.default);
-app.use("/favorites", favoriteRoutes_1.default);
-app.use("/plant-catalog", plantCatalogRoutes_1.default);
+app.use("/user-plants", auth_1.default, userPlantRoutes_1.default);
+app.use("/reminders", auth_1.default, reminderRoutes_1.default);
+app.use("/favorites", auth_1.default, favoriteRoutes_1.default);
+app.use("/plant-catalog", auth_1.default, plantCatalogRoutes_1.default);
 exports.default = app;
 //# sourceMappingURL=app.js.map

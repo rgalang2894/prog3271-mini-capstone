@@ -1,9 +1,8 @@
 require('dotenv').config();
 
 import express from "express";
-import cors from "cors";
 import path from "path";
-
+import authenticateToken from "./middleware/auth";
 import userRoutes from "./routes/userRoutes";
 import userPlantRoutes from "./routes/userPlantRoutes";
 import reminderRoutes from "./routes/reminderRoutes";
@@ -16,7 +15,6 @@ const publicDir = path.resolve(__dirname, "..", "public");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(express.static(publicDir));
 
 
@@ -29,9 +27,9 @@ app.get("/update-user-plant", (_req, res) => {
 });
 
 app.use("/users", userRoutes);
-app.use("/user-plants", userPlantRoutes);
-app.use("/reminders", reminderRoutes);
-app.use("/favorites", favoriteRoutes);
-app.use("/plant-catalog", plantCatalogRoutes);
+app.use("/user-plants", authenticateToken, userPlantRoutes);
+app.use("/reminders", authenticateToken, reminderRoutes);
+app.use("/favorites", authenticateToken, favoriteRoutes);
+app.use("/plant-catalog", authenticateToken, plantCatalogRoutes);
 
 export default app;

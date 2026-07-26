@@ -136,7 +136,11 @@ VALUES
 (2, 2),
 (3, 1);
 
+ALTER TABLE user_plants
+ADD COLUMN image VARCHAR(255) NULL AFTER last_watered;
 
+alter table users
+rename column usersname to username;
 
 select * from users;
 
