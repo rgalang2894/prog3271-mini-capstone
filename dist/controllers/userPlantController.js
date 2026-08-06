@@ -2,9 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editUserPlant = exports.addUserPlant = exports.getUserPlants = void 0;
 const userPlantModel_1 = require("../models/userPlantModel");
-const getUserPlants = async (_req, res) => {
+const getUserPlants = async (req, res) => {
     try {
-        const userPlants = await (0, userPlantModel_1.findAllUserPlants)();
+        const authenticatedUserId = req.user?.id;
+        const userPlants = authenticatedUserId
+            ? await (0, userPlantModel_1.findUserPlantsByUserId)(authenticatedUserId)
+            : await (0, userPlantModel_1.findUserPlantsByUserId)(Number(req.query.userId) || 0);
         res.json(userPlants);
     }
     catch (error) {
@@ -16,12 +19,14 @@ exports.getUserPlants = getUserPlants;
 const addUserPlant = async (req, res) => {
     try {
         const { user_id, catalog_id, custom_name, location, last_watered, image } = req.body;
-        if (!user_id || !custom_name) {
+        const authenticatedUserId = req.user?.id;
+        const effectiveUserId = authenticatedUserId ?? user_id;
+        if (!effectiveUserId || !custom_name) {
             res.status(400).json({ error: "UserID and Custom Name are required" });
             return;
         }
         const newPlant = await (0, userPlantModel_1.createUserPlant)({
-            user_id,
+            user_id: effectiveUserId,
             catalog_id: catalog_id ?? null,
             custom_name,
             location: location ?? null,

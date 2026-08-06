@@ -1,9 +1,13 @@
 import { Request, Response } from "express";
-import { createUserPlant, findAllUserPlants, updateUserPlant } from "../models/userPlantModel";
+import { createUserPlant, findUserPlantsByUserId, updateUserPlant } from "../models/userPlantModel";
 
-export const getUserPlants = async (_req: Request, res: Response) => {
+export const getUserPlants = async (req: Request, res: Response) => {
   try {
-    const userPlants = await findAllUserPlants();
+    const authenticatedUserId = req.user?.id;
+    const userPlants = authenticatedUserId
+      ? await findUserPlantsByUserId(authenticatedUserId)
+      : await findUserPlantsByUserId(Number(req.query.userId) || 0);
+
     res.json(userPlants);
   } catch (error) {
     console.error(error);
@@ -14,14 +18,16 @@ export const getUserPlants = async (_req: Request, res: Response) => {
 export const addUserPlant = async (req: Request, res: Response) => {
   try {
     const { user_id, catalog_id, custom_name, location, last_watered, image } = req.body;
+    const authenticatedUserId = req.user?.id;
+    const effectiveUserId = authenticatedUserId ?? user_id;
 
-    if (!user_id || !custom_name) {
+    if (!effectiveUserId || !custom_name) {
       res.status(400).json({ error: "UserID and Custom Name are required" });
       return;
     }
 
     const newPlant = await createUserPlant({
-      user_id,
+      user_id: effectiveUserId,
       catalog_id: catalog_id ?? null,
       custom_name,
       location: location ?? null,
