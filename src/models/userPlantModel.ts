@@ -23,6 +23,15 @@ export const findAllUserPlants = async () => {
   }
 };
 
+export const findUserPlantsByUserId = async (userId: number) => {
+  try {
+    const [rows] = await pool.query("SELECT * FROM user_plants WHERE user_id = ?", [userId]);
+    return rows;
+  } catch (error) {
+    throw createDbError("Failed to fetch user plants by user ID", error);
+  }
+};
+
 export const createUserPlant = async (payload: UserPlantInput) => {
   const { user_id, catalog_id, custom_name, location, last_watered, image } = payload;
 

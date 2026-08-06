@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserPlant = exports.createUserPlant = exports.findAllUserPlants = void 0;
+exports.updateUserPlant = exports.createUserPlant = exports.findUserPlantsByUserId = exports.findAllUserPlants = void 0;
 const db_1 = __importDefault(require("../db"));
 const createDbError = (message, error) => {
     const detail = error instanceof Error ? error.message : String(error);
@@ -19,6 +19,16 @@ const findAllUserPlants = async () => {
     }
 };
 exports.findAllUserPlants = findAllUserPlants;
+const findUserPlantsByUserId = async (userId) => {
+    try {
+        const [rows] = await db_1.default.query("SELECT * FROM user_plants WHERE user_id = ?", [userId]);
+        return rows;
+    }
+    catch (error) {
+        throw createDbError("Failed to fetch user plants by user ID", error);
+    }
+};
+exports.findUserPlantsByUserId = findUserPlantsByUserId;
 const createUserPlant = async (payload) => {
     const { user_id, catalog_id, custom_name, location, last_watered, image } = payload;
     if (!user_id || !custom_name) {

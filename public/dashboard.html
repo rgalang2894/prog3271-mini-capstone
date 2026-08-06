@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/stylesheets/dashboard.css" />
+  <title>Sproutly Dashboard</title>
+</head>
+
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <h1>Sproutly</h1>
+          <p>Grow with confidence</p>
+        </div>
+
+        <nav>
+          <ul class="nav-links">
+            <li><a class="active" href="#"><span class="icon"></span>Dashboard</a></li>
+            <li><a href="#"><span class="icon"></span>My Garden</a></li>
+            <li><a href="#"><span class="icon"></span>Reminders</a></li>
+            <li><a href="#"><span class="icon"></span>Profile</a></li>
+            <li><a href="#"><span class="icon"></span>Plant Catalogue</a></li>
+          </ul>
+        </nav>
+
+      </div>
+
+      <div class="footer-note">
+        <a class="logout-btn" href="/login.html">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <a class="fab" href="/user-plants.html" aria-label="Add a new user plant">+</a>
+
+      <section class="header">
+        <small id="dashboard-date">Thursday, June 11th</small>
+        <h2 id="welcome-name">Good Morning, User.</h2>
+        <p>Keep an eye on your plant care routine with a clear snapshot of your garden, reminders, and growing progress.</p>
+      </section>
+
+      <section class="cards">
+        <article class="card">
+          <h3>Total Plants</h3>
+          <div class="value" id="plant-count">0</div>
+          <div class="subtext">Plants in your collection</div>
+        </article>
+
+        <article class="card"> <!--STILL STATIC> WAITING FOR THE REMINDERS PAGE-->
+          <h3>Reminders</h3>
+          <div class="value" id="reminder-count">0 pending</div>
+          <div class="subtext">Stay on top of watering and feeding.</div>
+        </article> <!--STILL STATIC> WAITING FOR THE REMINDERS PAGE-->
+
+        <article class="card">
+          <h3>Plant Photos</h3>
+          <div class="value" id="photo-count">0 uploaded</div>
+          <div class="subtext">Add fresh snapshots of your garden.</div>
+        </article>
+
+      </section>
+
+      <section class="reminders"> <!--STILL STATIC> WAITING FOR THE REMINDERS PAGE-->
+        <div class="panel">
+          <header>
+            <div>
+              <h3>Reminder Checklist</h3>
+              <p>Upcoming care tasks for your plants this week.</p>
+            </div>
+          </header>
+          <ul>
+            <li>
+              <span class="bullet"></span>
+              <div class="item-text">
+                <strong>Water Fern</strong>
+                <p>Check soil moisture in the morning.</p>
+              </div>
+            </li>
+            <li>
+              <span class="bullet"></span>
+              <div class="item-text">
+                <strong>Fertilize Succulent</strong>
+                <p>Apply light nutrient boost this week.</p>
+              </div>
+            </li>
+            <li>
+              <span class="bullet"></span>
+              <div class="item-text">
+                <strong>Rotate Tomato Plant</strong>
+                <p>Turn pot for even sunlight exposure.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section> <!--STILL STATIC> WAITING FOR THE REMINDERS PAGE-->
+
+      <section class="gallery">
+        <div class="panel">
+          <header>
+            <div>
+              <h3>Plant Photo Gallery</h3>
+              <p>Recent plant moments to keep your dashboard inspiring.</p>
+            </div>
+          </header>
+
+          <div class="gallery-grid" id="gallery-grid"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+
+
+  <!-- SCRIPTS HERE -->
+  <script>
+    const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+    const token = localStorage.getItem("token");
+
+    const welcomeName = document.querySelector("#welcome-name");
+    const dashboardDate = document.querySelector("#dashboard-date");
+    const plantCount = document.querySelector("#plant-count");
+    const reminderCount = document.querySelector("#reminder-count");
+    const photoCount = document.querySelector("#photo-count");
+    const galleryGrid = document.querySelector("#gallery-grid");
+
+    const formatDate = (date) => {
+      const options = { weekday: "long", month: "long", day: "numeric" };
+      return new Intl.DateTimeFormat("en-US", options).format(date);
+    };
+
+    if (dashboardDate) {
+      dashboardDate.textContent = formatDate(new Date());
+    }
+
+    if (storedUser?.name) {
+      welcomeName.textContent = `Good Morning, ${storedUser.name}.`;
+    }
+
+    if (!token) {
+      window.location.href = "/login.html";
+    } else {
+      fetch("/user-plants", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then((response) => response.json())
+        .then((plants) => {
+          const plantList = Array.isArray(plants) ? plants : [];
+          const photoPlants = plantList.filter((plant) => plant.image && String(plant.image).trim());
+          const displayedPhotos = photoPlants.slice(0, 3);
+          const photoCountValue = photoPlants.length;
+
+          plantCount.textContent = String(plantList.length);
+          photoCount.textContent = `${photoCountValue} uploaded`;
+          reminderCount.textContent = `${Math.max(plantList.length, 0)} pending`;
+
+          if (galleryGrid) {
+            galleryGrid.innerHTML = "";
+
+            const getImageSrc = (image) => {
+              const trimmed = String(image).trim();
+              if (!trimmed) {
+                return "/assets/images/placeholder.jpg";
+              }
+              if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("/")) {
+                return encodeURI(trimmed);
+              }
+              const filename = trimmed.replace(/^.*[\\/]/, "");
+              return `/assets/images/${encodeURI(filename)}`;
+            };
+
+            if (displayedPhotos.length === 0) {
+              const card = document.createElement("div");
+              card.className = "photo-card";
+
+              const image = document.createElement("img");
+              image.src = "/assets/images/placeholder.jpg";
+              image.alt = "Placeholder plant photo";
+
+              const label = document.createElement("span");
+              label.textContent = "No uploaded photos yet.";
+
+              card.appendChild(image);
+              card.appendChild(label);
+              galleryGrid.appendChild(card);
+            } else {
+              displayedPhotos.forEach((plant) => {
+                const card = document.createElement("div");
+                card.className = "photo-card";
+
+                const imageSrc = getImageSrc(plant.image);
+                const image = document.createElement("img");
+                image.src = imageSrc;
+                image.alt = plant.custom_name || "Plant photo";
+                image.onerror = () => {
+                  image.src = "/assets/images/placeholder.jpg";
+                };
+
+                card.appendChild(image);
+                galleryGrid.appendChild(card);
+              });
+            }
+          }
+        })
+        .catch(() => {
+          plantCount.textContent = "0";
+          photoCount.textContent = "0 uploaded";
+          reminderCount.textContent = "0 pending";
+        });
+    }
+  </script>
+</body>
+</html>

@@ -25,7 +25,10 @@ export const registerUser = async (req: Request, res: Response) => {
       return res.status(409).json({ message: "Email already registered." });
     }
 
-    return res.status(500).json({ message: "Failed to create user.", error: error instanceof Error ? error.message : String(error) });
+    return res.status(500).json({
+      message: "Failed to create user.",
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 };
 
@@ -55,7 +58,10 @@ export const loginUser = async (req: Request, res: Response) => {
       token,
     });
   } catch (error) {
-    return res.status(500).json({ message: "Login failed." });
+    return res.status(500).json({
+      message: "Login failed.",
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 };
 

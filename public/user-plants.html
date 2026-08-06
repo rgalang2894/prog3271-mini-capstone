@@ -12,9 +12,6 @@
       <p>Use this form to add a plant to your personal collection.</p>
 
       <form id="user-plant-form">
-        <label for="user_id">User ID</label>
-        <input id="user_id" name="user_id" type="number" value="1" required />
-
         <label for="catalog_id">Catalog ID</label>
         <input id="catalog_id" name="catalog_id" type="number" value="1" required />
 
@@ -34,7 +31,11 @@
         <label for="image">Image</label>
         <input id="image" name="image" type="file" accept="image/*" />
 
-        <button type="submit">Save Plant</button>
+        <div class="form-actions">
+          <button type="submit" class="primary-btn">Save Plant</button>
+          <button type="button" id="reset-btn" class="secondary-btn">Reset</button>
+          <button type="button" id="back-btn" class="secondary-btn">Back</button>
+        </div>
       </form>
 
       <div id="message" class="message"></div>
@@ -43,18 +44,39 @@
     <script>
       const form = document.querySelector("#user-plant-form");
       const messageBox = document.querySelector("#message");
-      const userIdInput = document.querySelector("#user_id");
       const catalogIdInput = document.querySelector("#catalog_id");
       const customNameInput = document.querySelector("#custom_name");
       const locationInput = document.querySelector("#location");
       const lastWateredInput = document.querySelector("#last_watered");
       const imageInput = document.querySelector("#image");
+      const resetButton = document.querySelector("#reset-btn");
+      const backButton = document.querySelector("#back-btn");
+
+      resetButton.addEventListener("click", () => {
+        form.reset();
+        messageBox.style.display = "none";
+      });
+
+      backButton.addEventListener("click", () => {
+        window.location.href = "/dashboard.html";
+      });
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
 
+        const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          messageBox.className = "message error";
+          messageBox.textContent = "Please log in to add a plant.";
+          messageBox.style.display = "block";
+          window.location.href = "/login.html";
+          return;
+        }
+
         const payload = {
-          user_id: Number(userIdInput.value),
+          user_id: storedUser?.id ? Number(storedUser.id) : null,
           catalog_id: Number(catalogIdInput.value),
           custom_name: customNameInput.value,
           location: locationInput.value,
@@ -68,7 +90,10 @@
         try {
           const response = await fetch("/user-plants", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
             body: JSON.stringify(payload)
           });
 

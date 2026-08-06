@@ -54,7 +54,9 @@
             message.textContent = data.message || "Something went wrong.";
 
             if (response.ok) {
-            window.location.href = "/";
+              localStorage.setItem("token", data.token);
+              localStorage.setItem("user", JSON.stringify(data.user));
+              window.location.href = "/dashboard.html";
             }
         });
     </script>

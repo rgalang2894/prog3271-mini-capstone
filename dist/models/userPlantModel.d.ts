@@ -7,6 +7,7 @@ export interface UserPlantInput {
     image?: string | null;
 }
 export declare const findAllUserPlants: () => Promise<import("mysql2").QueryResult>;
+export declare const findUserPlantsByUserId: (userId: number) => Promise<import("mysql2").QueryResult>;
 export declare const createUserPlant: (payload: UserPlantInput) => Promise<{
     id: any;
     user_id: number;
