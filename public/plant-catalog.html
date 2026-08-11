@@ -4,28 +4,275 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sproutly - Plant Catalogue</title>
+    <link rel="stylesheet" href="/stylesheets/dashboard.css">
     <link rel="stylesheet" href="./stylesheets/style.css">
+    <link rel="stylesheet" href="./stylesheets/plant-catalog.css">
 </head>
 <body>
-    <div class="dashboard-layout">
-      <aside class="sidebar">
-        <div>
-          <div class="brand">
-            <h1>Sproutly</h1>
-            <p>Grow with confidence</p>
-          </div>
-          <nav>
-            <ul class="nav-links">
-              <li><a href="/dashboard.html"><span class="icon"></span>Dashboard</a></li>
-              <li><a class="active" href="/user-plants.html"><span class="icon"></span>My Garden</a></li>
-              <li><a href="/reminders.html"><span class="icon"></span>Reminders</a></li>
-              <li><a href="/profile.html"><span class="icon"></span>Profile</a></li>
-              <li><a href="/plant-catalog.html"><span class="icon"></span>Plant Catalogue</a></li>
-            </ul>
-          </nav>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <h1>Sproutly</h1>
+          <p>Grow with confidence</p>
         </div>
-        <a class="logout-btn" href="/login.html">Logout</a>
-      </aside>
-    </div>    
+
+        <nav>
+          <ul class="nav-links">
+            <li><a href="/dashboard.html"><span class="icon"></span>Dashboard</a></li>
+            <li><a href="/user-plants.html"><span class="icon"></span>My Garden</a></li>
+            <li><a href="/reminders.html"><span class="icon"></span>Reminders</a></li>
+            <li><a href="/profile.html"><span class="icon"></span>Profile</a></li>
+            <li><a class="active" href="/plant-catalog.html"><span class="icon"></span>Plant Catalogue</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer-note">
+        <a class="add-plant" href="/add-user-plants.html">
+          <span>+</span> Add New Plant
+        </a>
+
+        <a class="help-link" href="#">
+          <span class="round-icon">?</span> Help
+        </a>
+
+        <a class="logout-btn" href="/login.html">
+          <span class="logout-icon">↪</span> Logout
+        </a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="header">
+        <small id="catalog-date">Today</small>
+        <h2>Plant Catalogue</h2>
+        <p>Browse Sproutly’s plant collection and learn more about each species.</p>
+      </section>
+
+      <section class="catalog-topbar">
+        <div class="catalog-topbar-search">
+          <span class="search-icon">🔍</span>
+          <input id="catalog-search" type="search" placeholder="Search your garden..." />
+        </div>
+
+        <div class="catalog-topbar-badges">
+          <div class="status-card">
+            <strong id="catalog-count">0</strong>
+            <span>Plants</span>
+          </div>
+          <div class="status-card alert-card">
+            <strong id="alert-count">3</strong>
+            <span>Alerts</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="catalog-filters">
+        <div class="catalog-pill-row">
+          <button class="catalog-pill active" type="button">All Species</button>
+          <button class="catalog-pill" type="button">Succulents</button>
+          <button class="catalog-pill" type="button">Tropical</button>
+          <button class="catalog-pill" type="button">Herbs</button>
+          <button class="catalog-pill" type="button">Low Light</button>
+        </div>
+        <div class="sort-row">
+          <span>Sort by:</span>
+          <strong>Recently Added</strong>
+        </div>
+      </section>
+
+      <section class="catalog-panel">
+        <div class="panel">
+          <header>
+            <div>
+              <h3>All Plants</h3>
+              <p>Click a card to see more details and care guidance.</p>
+            </div>
+          </header>
+
+          <div class="catalog-grid" id="catalog-grid"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const catalogGrid = document.getElementById("catalog-grid");
+    const catalogCount = document.getElementById("catalog-count");
+    const alertCount = document.getElementById("alert-count");
+    const catalogDate = document.getElementById("catalog-date");
+
+    if (!token) {
+      window.location.href = "/login.html";
+    }
+
+    if (catalogDate) {
+      catalogDate.textContent = new Intl.DateTimeFormat("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric"
+      }).format(new Date());
+    }
+
+    const getCategory = (item) => {
+      return item.sunlight_req || item.common_name || "Unknown";
+    };
+
+    const matchesQuery = (item, query) => {
+      if (!query) return true;
+      const normalized = query.trim().toLowerCase();
+      return [item.common_name, item.scientific_name, item.description, item.sunlight_req]
+        .filter(Boolean)
+        .some((field) => field.toLowerCase().includes(normalized));
+    };
+
+    const createCard = (item) => {
+      const card = document.createElement("article");
+      card.className = "catalog-card";
+
+      const media = document.createElement("div");
+      media.className = "catalog-card-media";
+
+      const thumbnail = document.createElement("div");
+      thumbnail.className = "catalog-card-image";
+      const image = document.createElement("img");
+      image.src = item.image_url || "/assets/images/placeholder.jpg";
+      image.alt = item.common_name || item.scientific_name || "Plant image";
+      image.onerror = () => {
+        image.src = "/assets/images/placeholder.jpg";
+      };
+      thumbnail.appendChild(image);
+
+      const badge = document.createElement("span");
+      badge.className = "catalog-badge";
+      badge.textContent = getCategory(item);
+      media.append(thumbnail, badge);
+
+      const body = document.createElement("div");
+      body.className = "catalog-card-body";
+
+      const titleRow = document.createElement("div");
+      titleRow.className = "card-title-row";
+
+      const title = document.createElement("h4");
+      title.textContent = item.common_name || item.scientific_name || "Unknown plant";
+
+      const iconGroup = document.createElement("div");
+      iconGroup.className = "card-icon-group";
+
+      const editButton = document.createElement("button");
+      editButton.type = "button";
+      editButton.className = "icon-button";
+      editButton.title = "Edit plant";
+      editButton.textContent = "✎";
+
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "icon-button";
+      deleteButton.title = "Delete plant";
+      deleteButton.textContent = "🗑";
+
+      iconGroup.append(editButton, deleteButton);
+      titleRow.append(title, iconGroup);
+
+      const subtitle = document.createElement("p");
+      subtitle.textContent = item.scientific_name || "Species details coming soon.";
+
+      const detailsPanel = document.createElement("div");
+      detailsPanel.className = "catalog-card-details";
+      detailsPanel.innerHTML = `
+        <p><strong>Description:</strong> ${item.description || "No description available."}</p>
+        <p><strong>Watering:</strong> ${item.watering_guide || "No watering guide available."}</p>
+        <p><strong>Sunlight:</strong> ${item.sunlight_req || "No sunlight information available."}</p>
+      `;
+
+      const footer = document.createElement("div");
+      footer.className = "card-footer";
+
+      const actionPrimary = document.createElement("button");
+      actionPrimary.type = "button";
+      actionPrimary.className = "primary-button";
+      actionPrimary.textContent = "View Details";
+      actionPrimary.addEventListener("click", () => {
+        const open = detailsPanel.classList.toggle("visible");
+        actionPrimary.textContent = open ? "Hide Details" : "View Details";
+      });
+
+      footer.append(actionPrimary);
+      body.append(titleRow, subtitle, detailsPanel, footer);
+      card.append(media, body);
+
+      return card;
+    };
+
+    let allCatalogItems = [];
+
+    const renderCatalog = (items) => {
+      if (!catalogGrid) return;
+      catalogGrid.innerHTML = "";
+
+      const catalogItems = Array.isArray(items) ? items : [];
+      catalogItems.forEach((item) => {
+        catalogGrid.appendChild(createCard(item));
+      });
+
+      catalogCount.textContent = String(catalogItems.length);
+      if (alertCount) {
+        alertCount.textContent = String(Math.max(3, 3));
+      }
+
+      if (catalogItems.length === 0) {
+        const emptyMessage = document.createElement("div");
+        emptyMessage.className = "empty-state";
+        emptyMessage.innerHTML = `<p>No catalog items found yet. Please check back later.</p>`;
+        catalogGrid.appendChild(emptyMessage);
+      }
+    };
+
+    const applySearch = () => {
+      const query = document.getElementById("catalog-search")?.value || "";
+      const filtered = allCatalogItems.filter((item) => matchesQuery(item, query));
+      renderCatalog(filtered);
+    };
+
+    document.getElementById("catalog-search")?.addEventListener("input", applySearch);
+
+    const showCatalogError = (message) => {
+      if (!catalogGrid) return;
+      catalogGrid.innerHTML = `<div class="empty-state"><p>${message}</p></div>`;
+    };
+
+    const loadCatalog = async () => {
+      try {
+        const response = await fetch("/plant-catalog", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          showCatalogError(payload.error || "Failed to load the plant catalog.");
+          return;
+        }
+
+        const data = await response.json();
+        allCatalogItems = Array.isArray(data) ? data : [];
+        renderCatalog(allCatalogItems);
+      } catch (error) {
+        console.error("Cannot load plant catalog:", error);
+        showCatalogError("Unable to load the catalogue. Please try again later.");
+      }
+    };
+
+    loadCatalog();
+  </script>
 </body>
 </html>
