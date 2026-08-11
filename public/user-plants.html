@@ -3,118 +3,198 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sproutly - Add Plant</title>
+    <title>Sproutly - My Plants</title>
+    <link rel="stylesheet" href="/stylesheets/dashboard.css" />
     <link rel="stylesheet" href="/stylesheets/user-plants.css" />
   </head>
   <body>
-    <div class="card">
-      <h1>Add a User Plant</h1>
-      <p>Use this form to add a plant to your personal collection.</p>
+    <div class="dashboard-layout">
+      <aside class="sidebar">
+        <div>
+          <div class="brand">
+            <h1>Sproutly</h1>
+            <p>Grow with confidence</p>
+          </div>
 
-      <form id="user-plant-form">
-        <label for="catalog_id">Catalog ID</label>
-        <input id="catalog_id" name="catalog_id" type="number" value="1" required />
-
-        <label for="custom_name">Plant Name</label>
-        <input id="custom_name" name="custom_name" type="text" placeholder="e.g. My Monstera" required />
-
-        <label for="location">Location</label>
-        <select id="location" name="location">
-          <option value="Living Room">Living Room</option>
-          <option value="Balcony">Balcony</option>
-          <option value="Kitchen">Kitchen</option>
-        </select>
-
-        <label for="last_watered">Last Watered</label>
-        <input id="last_watered" name="last_watered" type="date" />
-
-        <label for="image">Image</label>
-        <input id="image" name="image" type="file" accept="image/*" />
-
-        <div class="form-actions">
-          <button type="submit" class="primary-btn">Save Plant</button>
-          <button type="button" id="reset-btn" class="secondary-btn">Reset</button>
-          <button type="button" id="back-btn" class="secondary-btn">Back</button>
+          <nav>
+            <ul class="nav-links">
+              <li><a href="/dashboard.html"><span class="icon"></span>Dashboard</a></li>
+              <li><a class="active" href="/user-plants.html"><span class="icon"></span>My Garden</a></li>
+              <li><a href="/reminders.html"><span class="icon"></span>Reminders</a></li>
+              <li><a href="/profile.html"><span class="icon"></span>Profile</a></li>
+              <li><a href="/plant-catalog.html"><span class="icon"></span>Plant Catalogue</a></li>
+            </ul>
+          </nav>
         </div>
-      </form>
 
-      <div id="message" class="message"></div>
+        <div class="footer-note">
+          <a class="add-plant" href="/add-user-plants.html">Add New Plant</a>
+          <a class="logout-btn" href="/login.html">Logout</a>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="header">
+            <p class="eyebrow">My Garden</p>
+            <h1>All your plants</h1>
+            <p class="intro">Browse and manage your plant collection in one place.</p>
+
+            <section class="filters">
+                <input id="search-input" type="search" placeholder="Search plants by name or location" />
+            </section>  
+        </section>
+
+        <section class="plant-page panel">
+          <!-- <header class="page-header">
+
+
+          </header> -->
+          <section class="cards-grid" id="plant-cards">
+            <div class="empty-state">
+              <p>No plants found yet.</p>
+              <a class="secondary-btn" href="/add-user-plants.html">Add your first plant</a>
+            </div>
+          </section>
+        </section>
+      </main>
     </div>
 
     <script>
-      const form = document.querySelector("#user-plant-form");
-      const messageBox = document.querySelector("#message");
-      const catalogIdInput = document.querySelector("#catalog_id");
-      const customNameInput = document.querySelector("#custom_name");
-      const locationInput = document.querySelector("#location");
-      const lastWateredInput = document.querySelector("#last_watered");
-      const imageInput = document.querySelector("#image");
-      const resetButton = document.querySelector("#reset-btn");
-      const backButton = document.querySelector("#back-btn");
+      const token = localStorage.getItem('token');
+      const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+      const plantCards = document.querySelector('#plant-cards');
+      const searchInput = document.querySelector('#search-input');
+      const placeholderImage = '/assets/images/placeholder.jpg';
 
-      resetButton.addEventListener("click", () => {
-        form.reset();
-        messageBox.style.display = "none";
-      });
+      const noMatchMessage = document.createElement('div');
+      noMatchMessage.className = 'empty-state';
+      noMatchMessage.style.display = 'none';
+      noMatchMessage.innerHTML = '<p>No plants matched your search.</p>';
+      if (plantCards?.parentNode) {
+        plantCards.parentNode.insertBefore(noMatchMessage, plantCards.nextSibling);
+      }
 
-      backButton.addEventListener("click", () => {
-        window.location.href = "/dashboard.html";
-      });
+      const getImageUrl = (image) => {
+        if (!image) return placeholderImage;
+        const trimmed = String(image).trim();
+        if (!trimmed) return placeholderImage;
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        if (trimmed.startsWith('/')) return trimmed;
+        return `/assets/images/${encodeURIComponent(trimmed.replace(/^.*[\\/]/, ''))}`;
+      };
 
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
+      const createPlantCard = (plant) => {
+        const card = document.createElement('article');
+        card.className = 'plant-card';
+        card.dataset.name = (plant.custom_name || plant.common_name || '').toLowerCase();
+        card.dataset.location = (plant.location || '').toLowerCase();
 
-        const storedUser = JSON.parse(localStorage.getItem("user") || "null");
-        const token = localStorage.getItem("token");
+        const image = document.createElement('img');
+        image.className = 'plant-image';
+        image.src = getImageUrl(plant.image);
+        image.alt = plant.custom_name || plant.common_name || 'Plant photo';
+        image.onerror = () => {
+          image.src = placeholderImage;
+        };
 
-        if (!token) {
-          messageBox.className = "message error";
-          messageBox.textContent = "Please log in to add a plant.";
-          messageBox.style.display = "block";
-          window.location.href = "/login.html";
+        const body = document.createElement('div');
+        body.className = 'plant-card-body';
+
+        const headerRow = document.createElement('div');
+        headerRow.className = 'plant-card-header';
+
+        const title = document.createElement('h2');
+        title.textContent = plant.custom_name || plant.common_name || 'Untitled Plant';
+
+        const headerActions = document.createElement('div');
+        headerActions.className = 'plant-card-actions';
+
+        const editButton = document.createElement('button');
+        editButton.type = 'button';
+        editButton.className = 'icon-btn icon-btn--update';
+        editButton.title = 'Edit plant';
+        editButton.textContent = '✎';
+        editButton.addEventListener('click', () => {
+          window.location.href = `/update-user-plant.html?plant_id=${encodeURIComponent(plant.id)}`;
+        });
+
+        headerActions.append(editButton);
+        headerRow.append(title, headerActions);
+
+        const meta = document.createElement('div');
+        meta.className = 'plant-meta';
+
+        const locationTag = document.createElement('span');
+        locationTag.className = 'plant-badge';
+        locationTag.textContent = plant.location || 'Unknown location';
+
+        const waterTag = document.createElement('span');
+        waterTag.className = 'plant-badge plant-badge-secondary';
+        waterTag.textContent = plant.last_watered
+          ? `Last watered ${new Date(plant.last_watered).toLocaleDateString()}`
+          : 'Watering date not set';
+
+        meta.append(locationTag, waterTag);
+
+        body.append(headerRow, meta);
+        card.append(image, body);
+        return card;
+      };
+
+      const renderPlants = (plants) => {
+        if (!plantCards) return;
+        plantCards.innerHTML = '';
+        const list = Array.isArray(plants) ? plants : [];
+
+        if (list.length === 0) {
+          plantCards.append(createEmptyState());
           return;
         }
 
-        const payload = {
-          user_id: storedUser?.id ? Number(storedUser.id) : null,
-          catalog_id: Number(catalogIdInput.value),
-          custom_name: customNameInput.value,
-          location: locationInput.value,
-          last_watered: lastWateredInput.value,
-          image: imageInput.files && imageInput.files[0] ? imageInput.files[0].name : null
-        };
+        list.forEach((plant) => plantCards.append(createPlantCard(plant)));
+      };
 
-        messageBox.className = "message";
-        messageBox.style.display = "none";
+      const createEmptyState = () => {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.innerHTML = `
+          <p>There are no plants in your garden yet.</p>
+          <a class="secondary-btn" href="/add-user-plants.html">Add your first plant</a>
+        `;
+        return empty;
+      };
 
-        try {
-          const response = await fetch("/user-plants", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(payload)
-          });
+      const filterPlants = () => {
+        const query = searchInput.value.trim().toLowerCase();
+        const cards = plantCards.querySelectorAll('.plant-card');
+        let visibleCount = 0;
 
-          const data = await response.json();
+        cards.forEach((card) => {
+          const text = `${card.dataset.name} ${card.dataset.location}`;
+          const match = !query || text.includes(query);
+          card.style.display = match ? 'flex' : 'none';
+          if (match) visibleCount += 1;
+        });
 
-          if (response.ok) {
-            messageBox.className = "message success";
-            messageBox.textContent = "Plant saved successfully!";
-            messageBox.style.display = "block";
-            form.reset();
-          } else {
-            messageBox.className = "message error";
-            messageBox.textContent = data.message || "Failed to save plant.";
-            messageBox.style.display = "block";
-          }
-        } catch (error) {
-          messageBox.className = "message error";
-          messageBox.textContent = "Something went wrong.";
-          messageBox.style.display = "block";
-        }
-      });
+        noMatchMessage.style.display = visibleCount === 0 && cards.length > 0 ? 'flex' : 'none';
+      };
+
+      if (!token) {
+        window.location.href = '/login.html';
+      } else {
+        fetch('/user-plants', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((response) => response.json())
+          .then(renderPlants)
+          .catch(() => renderPlants([]));
+      }
+
+      searchInput.addEventListener('input', filterPlants);
+
+      if (storedUser?.name) {
+        document.title = `Sproutly - ${storedUser.name}'s Plants`;
+      }
     </script>
   </body>
 </html>

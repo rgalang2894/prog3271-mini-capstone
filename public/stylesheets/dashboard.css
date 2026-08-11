@@ -81,6 +81,7 @@
       font-size: 2.8rem;
       line-height: 1.01;
       margin-bottom: 18px;
+      color: var(--text);
     }
     .header p {
       max-width: 720px;
@@ -198,6 +199,7 @@
       justify-content: center;
       color: #5f6d60;
     }
+    
     .logout-btn {
       display: inline-block;
       width: 100%;
@@ -217,24 +219,22 @@
       background: #dcefdc;
     }
 
-    .fab {
-      position: fixed;
-      right: 28px;
-      bottom: 28px;
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
+    .add-plant {
+      display: inline-block;
+      width: 100%;
+      margin-top: 0.75rem;
+      padding: 0.8rem 1rem;
+      border: none;
+      border-radius: 10px;
       background: #1b4332;
       color: #fff;
-      display: grid;
-      place-items: center;
-      font-size: 2rem;
+      font-weight: 600;
+      text-align: center;
       text-decoration: none;
-      box-shadow: 0 12px 28px rgba(27, 67, 50, 0.28);
-      z-index: 10;
+      cursor: pointer;
     }
 
-    .fab:hover {
+    .add-plant:hover {
       background: #163021;
     }
 

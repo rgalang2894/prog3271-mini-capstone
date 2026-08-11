@@ -140,7 +140,7 @@ ALTER TABLE user_plants
 ADD COLUMN image VARCHAR(255) NULL AFTER last_watered;
 
 alter table users
-rename column usersname to username;
+rename column username to name;
 
 select * from users;
 
@@ -151,6 +151,9 @@ select * from plant_catalog;
 select * from reminders;
 
 select * from favorites;
+
+delete from users where id = 2;
+
 
 
 

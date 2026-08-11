@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sproutly - Add Plant</title>
+    <link rel="stylesheet" href="/stylesheets/user-plants.css" />
+  </head>
+  <body>
+    <div class="card">
+      <h1>Add a User Plant</h1>
+      <p>Use this form to add a plant to your garden.</p>
+
+      <form id="user-plant-form">
+        <label for="catalog_id">Catalog ID</label>
+        <input id="catalog_id" name="catalog_id" type="number" value="1" required />
+
+        <label for="custom_name">Plant Name</label>
+        <input id="custom_name" name="custom_name" type="text" placeholder="e.g. My Monstera" required />
+
+        <label for="location">Location</label>
+        <select id="location" name="location">
+          <option value="Living Room">Living Room</option>
+          <option value="Balcony">Balcony</option>
+          <option value="Kitchen">Kitchen</option>
+        </select>
+
+        <label for="last_watered">Last Watered</label>
+        <input id="last_watered" name="last_watered" type="date" />
+
+        <label for="image">Image</label>
+        <input id="image" name="image" type="file" accept="image/*" />
+
+        <div class="form-actions">
+          <button type="submit" id="save-btn" class="primary-btn">Save Plant</button>
+          <button type="button" id="reset-btn" class="secondary-btn">Reset</button>
+          <button type="button" id="back-btn" class="secondary-btn">Back</button>
+        </div>
+      </form>
+
+      <div id="message" class="message"></div>
+    </div>
+
+    <script>
+      const form = document.querySelector("#user-plant-form");
+      const messageBox = document.querySelector("#message");
+      const catalogIdInput = document.querySelector("#catalog_id");
+      const customNameInput = document.querySelector("#custom_name");
+      const locationInput = document.querySelector("#location");
+      const lastWateredInput = document.querySelector("#last_watered");
+      const imageInput = document.querySelector("#image");
+      const resetButton = document.querySelector("#reset-btn");
+      const backButton = document.querySelector("#back-btn");
+
+      resetButton.addEventListener("click", () => {
+        form.reset();
+        messageBox.style.display = "none";
+      });
+
+      backButton.addEventListener("click", () => {
+        window.location.href = "/dashboard.html";
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          messageBox.className = "message error";
+          messageBox.textContent = "Please log in to add a plant.";
+          messageBox.style.display = "block";
+          window.location.href = "/login.html";
+          return;
+        }
+
+        const payload = {
+          user_id: storedUser?.id ? Number(storedUser.id) : null,
+          catalog_id: Number(catalogIdInput.value),
+          custom_name: customNameInput.value,
+          location: locationInput.value,
+          last_watered: lastWateredInput.value,
+          image: imageInput.files && imageInput.files[0] ? imageInput.files[0].name : null
+        };
+
+        messageBox.className = "message";
+        messageBox.style.display = "none";
+
+        try {
+          const response = await fetch("/user-plants", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            messageBox.className = "message success";
+            messageBox.textContent = "Plant saved successfully!";
+            messageBox.style.display = "block";
+            form.reset();
+          } else {
+            messageBox.className = "message error";
+            messageBox.textContent = data.message || "Failed to save plant.";
+            messageBox.style.display = "block";
+          }
+        } catch (error) {
+          messageBox.className = "message error";
+          messageBox.textContent = "Something went wrong.";
+          messageBox.style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>
