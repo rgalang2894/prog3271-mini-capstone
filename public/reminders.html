@@ -1,12 +1,14 @@
-<!DOCTYPE html>
+// Reminders html page
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sproutly - Reminders</title>
-    <link rel="stylesheet" href="./stylesheets/style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="/stylesheets/dashboard.css" />
+    <link rel="stylesheet" href="/stylesheets/user-plants.css" />
+  </head>
+  <body>
     <div class="dashboard-layout">
       <aside class="sidebar">
         <div>
@@ -16,16 +18,282 @@
           </div>
           <nav>
             <ul class="nav-links">
-              <li><a href="/dashboard.html"><span class="icon"></span>Dashboard</a></li>
-              <li><a class="active" href="/user-plants.html"><span class="icon"></span>My Garden</a></li>
-              <li><a href="/reminders.html"><span class="icon"></span>Reminders</a></li>
-              <li><a href="/profile.html"><span class="icon"></span>Profile</a></li>
-              <li><a href="/plant-catalog.html"><span class="icon"></span>Plant Catalogue</a></li>
+              <li>
+                <a href="/dashboard.html"
+                  ><span class="icon"></span>Dashboard</a
+                >
+              </li>
+              <li>
+                <a href="/user-plants.html"
+                  ><span class="icon"></span>My Garden</a
+                >
+              </li>
+              <li>
+                <a class="active" href="/reminders.html"
+                  ><span class="icon"></span>Reminders</a
+                >
+              </li>
+              <li>
+                <a href="/profile.html"><span class="icon"></span>Profile</a>
+              </li>
+              <li>
+                <a href="/plant-catalog.html"
+                  ><span class="icon"></span>Plant Catalogue</a
+                >
+              </li>
             </ul>
           </nav>
         </div>
-        <a class="logout-btn" href="/login.html">Logout</a>
+        <div class="footer-note">
+          <a class="logout-btn" href="/login.html">Logout</a>
+        </div>
       </aside>
+
+      <main class="main">
+        <section class="header">
+          <p class="eyebrow">Reminders</p>
+          <h1>Care reminders for your garden</h1>
+          <p>See and create reminders for all of your plants in one place.</p>
+        </section>
+
+        <section class="panel">
+          <header>
+            <div>
+              <h3>Upcoming reminders</h3>
+              <p>All reminders have been seen.</p>
+            </div>
+            <button
+              class="secondary-btn"
+              id="btn-refresh-reminders"
+              type="button"
+            >
+              Refresh
+            </button>
+          </header>
+
+          <ul class="reminders" id="reminders-list">
+            <li>Loading reminders…</li>
+          </ul>
+
+          <div class="form-actions" style="margin-top: 24px">
+            <button
+              class="secondary-btn"
+              type="button"
+              id="toggle-reminder-form"
+            >
+              Add Reminder
+            </button>
+          </div>
+
+          <article
+            class="card"
+            id="reminder-card"
+            style="display: none; margin-top: 24px"
+          >
+            <h3>Create a new reminder</h3>
+            <form id="reminder-form">
+              <label for="r_plant_id">Plant</label>
+              <select id="r_plant_id" name="user_plant_id" required>
+                <option value="">Select a plant</option>
+              </select>
+
+              <label for="r_type">Reminder Type</label>
+              <select id="r_type" name="reminder_type" required>
+                <option value="">Select type</option>
+                <option value="Water">Water</option>
+                <option value="Fertilizer">Fertilizer</option>
+                <option value="Prune">Prune</option>
+                <option value="Repot">Repot</option>
+              </select>
+
+              <label for="r_frequency">Frequency (days)</label>
+              <input
+                id="r_frequency"
+                name="frequency_days"
+                type="number"
+                min="1"
+                required
+              />
+
+              <label for="r_date">Next Due Date</label>
+              <input id="r_date" name="next_due_date" type="date" required />
+
+              <div class="form-actions">
+                <button
+                  class="secondary-btn"
+                  type="button"
+                  id="cancel-reminder"
+                  style="margin-right: 0.75rem"
+                >
+                  Cancel
+                </button>
+                <button class="primary-btn" type="submit">Add Reminder</button>
+              </div>
+            </form>
+          </article>
+
+          <div
+            id="reminders-message"
+            class="message"
+            style="display: none"
+          ></div>
+        </section>
+      </main>
     </div>
-</body>
+
+    <script>
+      const remindersList = document.querySelector("#reminders-list");
+      const refreshBtn = document.querySelector("#btn-refresh-reminders");
+      const toggleFormBtn = document.querySelector("#toggle-reminder-form");
+      const cancelFormBtn = document.querySelector("#cancel-reminder");
+      const form = document.querySelector("#reminder-form");
+      const reminderCard = document.querySelector("#reminder-card");
+      const message = document.querySelector("#reminders-message");
+      const plantSelect = document.querySelector("#r_plant_id");
+
+      // Object to map plant IDs to their names for display in reminders
+      let plantMap = {};
+
+      // Function to update the message display with text and type
+      const updateMessage = (text, type = "") => {
+        if (!message) return;
+        message.textContent = text;
+        message.className = `message ${type}`.trim();
+        message.style.display = text ? "block" : "none";
+      };
+
+      const toggleForm = (show) => {
+        reminderCard.style.display = show ? "block" : "none";
+      };
+
+      // Function to render the list of reminders on the page
+      const renderReminders = (items) => {
+        if (!remindersList) return;
+        remindersList.innerHTML = "";
+        if (!Array.isArray(items) || items.length === 0) {
+          remindersList.innerHTML = "<li>No reminders found.</li>";
+          return;
+        }
+
+        // Sort reminders by next date due
+        items.forEach((item) => {
+          const li = document.createElement("li");
+          const plantName =
+            plantMap[item.user_plant_id] || `Plant ${item.user_plant_id}`;
+          const dueDate = item.next_due_date
+            ? new Date(item.next_due_date).toLocaleDateString()
+            : "No date";
+          li.innerHTML = `
+            <span class="bullet"></span>
+            <div class="item-text">
+              <strong>${plantName}</strong>
+              <p>${item.reminder_type} due ${dueDate}</p>
+            </div>
+          `;
+          remindersList.appendChild(li);
+        });
+      };
+
+      // Function to load the user's plants from the API and fill up the plant select dropdown
+      const loadPlants = async (token) => {
+        try {
+          const response = await fetch("/user-plants", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!response.ok) throw new Error(`Status ${response.status}`);
+          const plants = await response.json();
+          plantSelect.innerHTML = '<option value="">Select a plant</option>';
+          plantMap = {};
+          Array.isArray(plants) &&
+            plants.forEach((plant) => {
+              const option = document.createElement("option");
+              option.value = plant.id;
+              option.textContent =
+                plant.custom_name || plant.common_name || `Plant ${plant.id}`;
+              plantSelect.appendChild(option);
+              plantMap[plant.id] = option.textContent;
+            });
+        } catch (error) {
+          plantSelect.innerHTML =
+            '<option value="">Unable to load plants</option>';
+        }
+      };
+
+      const loadReminders = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        // Update the message to indicate that reminders are being loaded
+        updateMessage("Loading reminders...");
+        try {
+          const res = await fetch("/reminders", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error(`Status ${res.status}`);
+          const data = await res.json();
+          renderReminders(data);
+          updateMessage("");
+        } catch (err) {
+          updateMessage(`Unable to load reminders: ${err}`, "error");
+          remindersList.innerHTML = "<li>Unable to load reminders.</li>";
+        }
+      };
+
+      refreshBtn.addEventListener("click", loadReminders);
+      toggleFormBtn.addEventListener("click", () => toggleForm(true));
+      cancelFormBtn.addEventListener("click", () => toggleForm(false));
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const token = localStorage.getItem("token");
+        if (!token) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        const payload = {
+          user_plant_id: Number(plantSelect.value),
+          reminder_type: document.querySelector("#r_type").value,
+          frequency_days: Number(document.querySelector("#r_frequency").value),
+          next_due_date: document.querySelector("#r_date").value,
+        };
+
+        try {
+          const res = await fetch("/reminders", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+          });
+          const result = await res.json();
+          if (!res.ok) {
+            throw new Error(result.error || `Status ${res.status}`);
+          }
+          updateMessage("Reminder created successfully.", "success");
+          form.reset();
+          loadReminders();
+          toggleForm(false);
+        } catch (err) {
+          updateMessage(`Failed to create reminder: ${err}`, "error");
+        }
+      });
+
+      const init = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          window.location.href = "/login.html";
+          return;
+        }
+        await loadPlants(token);
+        await loadReminders();
+      };
+
+      init();
+    </script>
+  </body>
 </html>

@@ -25,24 +25,49 @@ export const findAllUserPlants = async () => {
 
 export const findUserPlantsByUserId = async (userId: number) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM user_plants WHERE user_id = ?", [userId]);
+    const [rows] = await pool.query(
+      "SELECT * FROM user_plants WHERE user_id = ?",
+      [userId],
+    );
     return rows;
   } catch (error) {
     throw createDbError("Failed to fetch user plants by user ID", error);
   }
 };
 
+export const findUserPlantById = async (userId: number, plantId: number) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT * FROM user_plants WHERE id = ? AND user_id = ?",
+      [plantId, userId],
+    );
+    return Array.isArray(rows) && rows.length > 0 ? (rows[0] as any) : null;
+  } catch (error) {
+    throw createDbError("Failed to fetch user plant by ID", error);
+  }
+};
+
 export const createUserPlant = async (payload: UserPlantInput) => {
-  const { user_id, catalog_id, custom_name, location, last_watered, image } = payload;
+  const { user_id, catalog_id, custom_name, location, last_watered, image } =
+    payload;
 
   if (!user_id || !custom_name) {
-    throw new Error("user_id and custom_name are required to create a user plant");
+    throw new Error(
+      "user_id and custom_name are required to create a user plant",
+    );
   }
 
   try {
     const [result]: any = await pool.query(
       "INSERT INTO user_plants (user_id, catalog_id, custom_name, location, last_watered, image) VALUES (?, ?, ?, ?, ?, ?)",
-      [user_id, catalog_id ?? null, custom_name, location ?? null, last_watered ?? null, image ?? null]
+      [
+        user_id,
+        catalog_id ?? null,
+        custom_name,
+        location ?? null,
+        last_watered ?? null,
+        image ?? null,
+      ],
     );
 
     return {
@@ -59,8 +84,13 @@ export const createUserPlant = async (payload: UserPlantInput) => {
   }
 };
 
-export const updateUserPlant = async (id: number, payload: Partial<UserPlantInput>) => {
-  const entries = Object.entries(payload).filter(([, value]) => value !== undefined);
+export const updateUserPlant = async (
+  id: number,
+  payload: Partial<UserPlantInput>,
+) => {
+  const entries = Object.entries(payload).filter(
+    ([, value]) => value !== undefined,
+  );
 
   if (entries.length === 0) {
     return null;
@@ -72,7 +102,7 @@ export const updateUserPlant = async (id: number, payload: Partial<UserPlantInpu
   try {
     const [result]: any = await pool.query(
       `UPDATE user_plants SET ${setClause} WHERE id = ?`,
-      [...values, id]
+      [...values, id],
     );
 
     if (result.affectedRows === 0) {
@@ -82,5 +112,18 @@ export const updateUserPlant = async (id: number, payload: Partial<UserPlantInpu
     return { id, ...payload };
   } catch (error) {
     throw createDbError("Failed to update user plant", error);
+  }
+};
+
+export const deleteUserPlant = async (userId: number, plantId: number) => {
+  try {
+    const [result]: any = await pool.query(
+      "DELETE FROM user_plants WHERE id = ? AND user_id = ?",
+      [plantId, userId],
+    );
+
+    return result.affectedRows > 0;
+  } catch (error) {
+    throw createDbError("Failed to delete user plant", error);
   }
 };

@@ -1,0 +1,203 @@
+// Plant details html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sproutly - Plant Details</title>
+    <link rel="stylesheet" href="/stylesheets/dashboard.css" />
+    <link rel="stylesheet" href="/stylesheets/user-plants.css" />
+  </head>
+  <body>
+    <div class="dashboard-layout">
+      <aside class="sidebar">
+        <div>
+          <div class="brand">
+            <h1>Sproutly</h1>
+            <p>Grow with confidence</p>
+          </div>
+          <nav>
+            <ul class="nav-links">
+              <li>
+                <a href="/dashboard.html"
+                  ><span class="icon"></span>Dashboard</a
+                >
+              </li>
+              <li>
+                <a class="active" href="/user-plants.html"
+                  ><span class="icon"></span>My Garden</a
+                >
+              </li>
+              <li>
+                <a href="/reminders.html"
+                  ><span class="icon"></span>Reminders</a
+                >
+              </li>
+              <li>
+                <a href="/profile.html"><span class="icon"></span>Profile</a>
+              </li>
+              <li>
+                <a href="/plant-catalog.html"
+                  ><span class="icon"></span>Plant Catalogue</a
+                >
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <a class="logout-btn" href="/login.html">Logout</a>
+      </aside>
+      <main class="main">
+        <section class="header">
+          <p class="eyebrow">Plant Details</p>
+          <h1 id="plant-title">Loading plant...</h1>
+          <p id="plant-subtitle">Details about your plant will appear here.</p>
+        </section>
+
+        <section class="plant-page panel">
+          <div id="plant-detail-card" class="plant-detail-card">
+            <div class="plant-detail-image-wrapper">
+              <img
+                id="plant-image"
+                class="plant-detail-image"
+                src="/assets/images/placeholder.jpg"
+                alt="Plant image"
+              />
+            </div>
+            <div class="plant-detail-info">
+              <div class="detail-row">
+                <strong>Custom Name:</strong>
+                <span id="plant-custom-name">-</span>
+              </div>
+              <div class="detail-row">
+                <strong>Location:</strong>
+                <span id="plant-location">-</span>
+              </div>
+              <div class="detail-row">
+                <strong>Last Watered:</strong>
+                <span id="plant-last-watered">-</span>
+              </div>
+              <div class="detail-row">
+                <strong>Plant ID:</strong>
+                <span id="plant-id">-</span>
+              </div>
+              <div class="detail-row">
+                <strong>Catalog ID:</strong>
+                <span id="plant-catalog-id">-</span>
+              </div>
+              <div class="detail-row">
+                <strong>Image URL:</strong>
+                <span id="plant-image-url">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="plant-actions"
+            style="margin-top: 24px; gap: 12px; display: flex; flex-wrap: wrap"
+          >
+            <button class="secondary-btn" id="back-button" type="button">
+              Back to Garden
+            </button>
+            <button class="primary-btn" id="edit-button" type="button">
+              Edit Plant
+            </button>
+          </div>
+
+          <div
+            id="plant-error"
+            class="message error"
+            style="display: none; margin-top: 16px"
+          ></div>
+        </section>
+      </main>
+    </div>
+
+    // Similar script to update-user-plant.html for fetching and displaying
+    plant details (had to do it in this way or else it wouldn't work)
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const plantId = urlParams.get("plant_id");
+      const token = localStorage.getItem("token");
+
+      const plantTitle = document.querySelector("#plant-title");
+      const plantSubtitle = document.querySelector("#plant-subtitle");
+      const plantImage = document.querySelector("#plant-image");
+      const customName = document.querySelector("#plant-custom-name");
+      const locationEl = document.querySelector("#plant-location");
+      const lastWatered = document.querySelector("#plant-last-watered");
+      const plantIdEl = document.querySelector("#plant-id");
+      const catalogIdEl = document.querySelector("#plant-catalog-id");
+      const imageUrlEl = document.querySelector("#plant-image-url");
+      const plantError = document.querySelector("#plant-error");
+      const backButton = document.querySelector("#back-button");
+      const editButton = document.querySelector("#edit-button");
+
+      const placeholderImage = "/assets/images/placeholder.jpg";
+
+      // Function to get the correct image URL based on the provided image value
+      function getImageUrl(image) {
+        if (!image) return placeholderImage;
+        const trimmed = String(image).trim();
+        if (!trimmed) return placeholderImage;
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        if (trimmed.startsWith("/")) return trimmed;
+        return `/assets/images/${encodeURIComponent(trimmed.replace(/^.*[\\/]/, ""))}`;
+      }
+
+      // Error handling functions to show and hide error messages
+      function showError(message) {
+        plantError.textContent = message;
+        plantError.style.display = "block";
+      }
+      // Hide error message function
+      function hideError() {
+        plantError.style.display = "none";
+      }
+
+      // Function to render plant details on the page
+      // Grabs the plant data and updates according to the users pre-existing plant data
+      function renderPlant(plant) {
+        plantTitle.textContent = plant.custom_name || "Plant Details";
+        plantSubtitle.textContent = `Plant ID ${plant.id}`;
+        customName.textContent = plant.custom_name || "-";
+        locationEl.textContent = plant.location || "Unknown";
+        lastWatered.textContent = plant.last_watered
+          ? new Date(plant.last_watered).toLocaleDateString()
+          : "Not set";
+        plantIdEl.textContent = plant.id || "-";
+        catalogIdEl.textContent = plant.catalog_id || "-";
+        imageUrlEl.textContent = plant.image || "-";
+        plantImage.src = getImageUrl(plant.image);
+      }
+
+      backButton.addEventListener("click", () => {
+        window.location.href = "/user-plants.html";
+      });
+
+      editButton.addEventListener("click", () => {
+        if (!plantId) return;
+        window.location.href = `/update-user-plant.html?plant_id=${encodeURIComponent(plantId)}`;
+      });
+
+      // Load plant details on page load
+      if (!token) {
+        window.location.href = "/login.html";
+      } else if (!plantId) {
+        showError("Missing plant_id query parameter.");
+      } else {
+        fetch(`/user-plants/${encodeURIComponent(plantId)}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then(async (response) => {
+            if (!response.ok) {
+              const body = await response.json().catch(() => ({}));
+              throw new Error(body.error || `Status ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(renderPlant)
+          .catch((err) => showError(`Unable to load plant details: ${err}`));
+      }
+    </script>
+  </body>
+</html>

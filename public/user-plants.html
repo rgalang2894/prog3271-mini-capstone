@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -18,11 +18,29 @@
 
           <nav>
             <ul class="nav-links">
-              <li><a href="/dashboard.html"><span class="icon"></span>Dashboard</a></li>
-              <li><a class="active" href="/user-plants.html"><span class="icon"></span>My Garden</a></li>
-              <li><a href="/reminders.html"><span class="icon"></span>Reminders</a></li>
-              <li><a href="/profile.html"><span class="icon"></span>Profile</a></li>
-              <li><a href="/plant-catalog.html"><span class="icon"></span>Plant Catalogue</a></li>
+              <li>
+                <a href="/dashboard.html"
+                  ><span class="icon"></span>Dashboard</a
+                >
+              </li>
+              <li>
+                <a class="active" href="/user-plants.html"
+                  ><span class="icon"></span>My Garden</a
+                >
+              </li>
+              <li>
+                <a href="/reminders.html"
+                  ><span class="icon"></span>Reminders</a
+                >
+              </li>
+              <li>
+                <a href="/profile.html"><span class="icon"></span>Profile</a>
+              </li>
+              <li>
+                <a href="/plant-catalog.html"
+                  ><span class="icon"></span>Plant Catalogue</a
+                >
+              </li>
             </ul>
           </nav>
         </div>
@@ -35,13 +53,19 @@
 
       <main class="main">
         <section class="header">
-            <p class="eyebrow">My Garden</p>
-            <h1>All your plants</h1>
-            <p class="intro">Browse and manage your plant collection in one place.</p>
+          <p class="eyebrow">My Garden</p>
+          <h1>All your plants</h1>
+          <p class="intro">
+            Browse and manage your plant collection in one place.
+          </p>
 
-            <section class="filters">
-                <input id="search-input" type="search" placeholder="Search plants by name or location" />
-            </section>  
+          <section class="filters">
+            <input
+              id="search-input"
+              type="search"
+              placeholder="Search plants by name or location"
+            />
+          </section>
         </section>
 
         <section class="plant-page panel">
@@ -52,7 +76,9 @@
           <section class="cards-grid" id="plant-cards">
             <div class="empty-state">
               <p>No plants found yet.</p>
-              <a class="secondary-btn" href="/add-user-plants.html">Add your first plant</a>
+              <a class="secondary-btn" href="/add-user-plants.html"
+                >Add your first plant</a
+              >
             </div>
           </section>
         </section>
@@ -60,18 +86,21 @@
     </div>
 
     <script>
-      const token = localStorage.getItem('token');
-      const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
-      const plantCards = document.querySelector('#plant-cards');
-      const searchInput = document.querySelector('#search-input');
-      const placeholderImage = '/assets/images/placeholder.jpg';
+      const token = localStorage.getItem("token");
+      const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+      const plantCards = document.querySelector("#plant-cards");
+      const searchInput = document.querySelector("#search-input");
+      const placeholderImage = "/assets/images/placeholder.jpg";
 
-      const noMatchMessage = document.createElement('div');
-      noMatchMessage.className = 'empty-state';
-      noMatchMessage.style.display = 'none';
-      noMatchMessage.innerHTML = '<p>No plants matched your search.</p>';
+      const noMatchMessage = document.createElement("div");
+      noMatchMessage.className = "empty-state";
+      noMatchMessage.style.display = "none";
+      noMatchMessage.innerHTML = "<p>No plants matched your search.</p>";
       if (plantCards?.parentNode) {
-        plantCards.parentNode.insertBefore(noMatchMessage, plantCards.nextSibling);
+        plantCards.parentNode.insertBefore(
+          noMatchMessage,
+          plantCards.nextSibling,
+        );
       }
 
       const getImageUrl = (image) => {
@@ -79,60 +108,74 @@
         const trimmed = String(image).trim();
         if (!trimmed) return placeholderImage;
         if (/^https?:\/\//i.test(trimmed)) return trimmed;
-        if (trimmed.startsWith('/')) return trimmed;
-        return `/assets/images/${encodeURIComponent(trimmed.replace(/^.*[\\/]/, ''))}`;
+        if (trimmed.startsWith("/")) return trimmed;
+        return `/assets/images/${encodeURIComponent(trimmed.replace(/^.*[\\/]/, ""))}`;
       };
 
       const createPlantCard = (plant) => {
-        const card = document.createElement('article');
-        card.className = 'plant-card';
-        card.dataset.name = (plant.custom_name || plant.common_name || '').toLowerCase();
-        card.dataset.location = (plant.location || '').toLowerCase();
+        const card = document.createElement("article");
+        card.className = "plant-card";
+        card.dataset.name = (
+          plant.custom_name ||
+          plant.common_name ||
+          ""
+        ).toLowerCase();
+        card.dataset.location = (plant.location || "").toLowerCase();
 
-        const image = document.createElement('img');
-        image.className = 'plant-image';
+        const image = document.createElement("img");
+        image.className = "plant-image";
         image.src = getImageUrl(plant.image);
-        image.alt = plant.custom_name || plant.common_name || 'Plant photo';
+        image.alt = plant.custom_name || plant.common_name || "Plant photo";
         image.onerror = () => {
           image.src = placeholderImage;
         };
 
-        const body = document.createElement('div');
-        body.className = 'plant-card-body';
+        const body = document.createElement("div");
+        body.className = "plant-card-body";
 
-        const headerRow = document.createElement('div');
-        headerRow.className = 'plant-card-header';
+        const headerRow = document.createElement("div");
+        headerRow.className = "plant-card-header";
 
-        const title = document.createElement('h2');
-        title.textContent = plant.custom_name || plant.common_name || 'Untitled Plant';
+        const title = document.createElement("h2");
+        title.textContent =
+          plant.custom_name || plant.common_name || "Untitled Plant";
 
-        const headerActions = document.createElement('div');
-        headerActions.className = 'plant-card-actions';
+        const headerActions = document.createElement("div");
+        headerActions.className = "plant-card-actions";
 
-        const editButton = document.createElement('button');
-        editButton.type = 'button';
-        editButton.className = 'icon-btn icon-btn--update';
-        editButton.title = 'Edit plant';
-        editButton.textContent = '✎';
-        editButton.addEventListener('click', () => {
+        const detailButton = document.createElement("button");
+        detailButton.type = "button";
+        detailButton.className = "icon-btn icon-btn--detail";
+        detailButton.title = "View details";
+        detailButton.textContent = "ℹ️";
+        detailButton.addEventListener("click", () => {
+          window.location.href = `/plant-details.html?plant_id=${encodeURIComponent(plant.id)}`;
+        });
+
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "icon-btn icon-btn--update";
+        editButton.title = "Edit plant";
+        editButton.textContent = "✎";
+        editButton.addEventListener("click", () => {
           window.location.href = `/update-user-plant.html?plant_id=${encodeURIComponent(plant.id)}`;
         });
 
-        headerActions.append(editButton);
+        headerActions.append(detailButton, editButton);
         headerRow.append(title, headerActions);
 
-        const meta = document.createElement('div');
-        meta.className = 'plant-meta';
+        const meta = document.createElement("div");
+        meta.className = "plant-meta";
 
-        const locationTag = document.createElement('span');
-        locationTag.className = 'plant-badge';
-        locationTag.textContent = plant.location || 'Unknown location';
+        const locationTag = document.createElement("span");
+        locationTag.className = "plant-badge";
+        locationTag.textContent = plant.location || "Unknown location";
 
-        const waterTag = document.createElement('span');
-        waterTag.className = 'plant-badge plant-badge-secondary';
+        const waterTag = document.createElement("span");
+        waterTag.className = "plant-badge plant-badge-secondary";
         waterTag.textContent = plant.last_watered
           ? `Last watered ${new Date(plant.last_watered).toLocaleDateString()}`
-          : 'Watering date not set';
+          : "Watering date not set";
 
         meta.append(locationTag, waterTag);
 
@@ -143,7 +186,7 @@
 
       const renderPlants = (plants) => {
         if (!plantCards) return;
-        plantCards.innerHTML = '';
+        plantCards.innerHTML = "";
         const list = Array.isArray(plants) ? plants : [];
 
         if (list.length === 0) {
@@ -155,8 +198,8 @@
       };
 
       const createEmptyState = () => {
-        const empty = document.createElement('div');
-        empty.className = 'empty-state';
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
         empty.innerHTML = `
           <p>There are no plants in your garden yet.</p>
           <a class="secondary-btn" href="/add-user-plants.html">Add your first plant</a>
@@ -166,23 +209,24 @@
 
       const filterPlants = () => {
         const query = searchInput.value.trim().toLowerCase();
-        const cards = plantCards.querySelectorAll('.plant-card');
+        const cards = plantCards.querySelectorAll(".plant-card");
         let visibleCount = 0;
 
         cards.forEach((card) => {
           const text = `${card.dataset.name} ${card.dataset.location}`;
           const match = !query || text.includes(query);
-          card.style.display = match ? 'flex' : 'none';
+          card.style.display = match ? "flex" : "none";
           if (match) visibleCount += 1;
         });
 
-        noMatchMessage.style.display = visibleCount === 0 && cards.length > 0 ? 'flex' : 'none';
+        noMatchMessage.style.display =
+          visibleCount === 0 && cards.length > 0 ? "flex" : "none";
       };
 
       if (!token) {
-        window.location.href = '/login.html';
+        window.location.href = "/login.html";
       } else {
-        fetch('/user-plants', {
+        fetch("/user-plants", {
           headers: { Authorization: `Bearer ${token}` },
         })
           .then((response) => response.json())
@@ -190,7 +234,7 @@
           .catch(() => renderPlants([]));
       }
 
-      searchInput.addEventListener('input', filterPlants);
+      searchInput.addEventListener("input", filterPlants);
 
       if (storedUser?.name) {
         document.title = `Sproutly - ${storedUser.name}'s Plants`;

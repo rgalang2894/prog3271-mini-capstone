@@ -1,24 +1,53 @@
-<!DOCTYPE html>
+// HTML page for updating a users plant. Can be accessed from the
+user-plants.html page.
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sproutly - Update Plant</title>
-    <link rel="stylesheet" href="/user-plants.css" />
-    <link rel="stylesheet" href="./stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/dashboard.css" />
+    <link rel="stylesheet" href="/stylesheets/user-plants.css" />
   </head>
   <body>
     <div class="card">
       <h1>Update a User Plant</h1>
       <p>Enter the plant ID and update one or more fields.</p>
 
+      <!-- Temporary Details / Actions area -->
+      <section class="card" style="margin-bottom: 16px">
+        <h2>Plant Details</h2>
+        <label for="view_plant_id">Plant ID</label>
+        <input
+          id="view_plant_id"
+          type="number"
+          placeholder="Enter plant id to view"
+        />
+        <button id="btn-view" type="button">View Details</button>
+        <button id="btn-delete" type="button" style="margin-left: 8px">
+          Delete Plant
+        </button>
+
+        <div id="plant-details" style="margin-top: 12px; display: none">
+          <strong>Preview:</strong>
+          <pre id="plant-details-pre" style="white-space: pre-wrap"></pre>
+        </div>
+      </section>
+
       <form id="update-plant-form">
         <label for="plant_id">Plant ID</label>
         <input id="plant_id" name="plant_id" type="number" required />
 
+        // Generic fields with placeholder
         <label for="custom_name">Plant Name</label>
-        <input id="custom_name" name="custom_name" type="text" placeholder="e.g. Sunny" />
+        <input
+          id="custom_name"
+          name="custom_name"
+          type="text"
+          placeholder="e.g. Sunny"
+        />
 
+        // Location dropdown with options
         <label for="location">Location</label>
         <select id="location" name="location">
           <option value="">-- choose location --</option>
@@ -29,73 +58,209 @@
           <option value="Window">Window</option>
         </select>
 
+        // Last watered date input
         <label for="last_watered">Last Watered</label>
         <input id="last_watered" name="last_watered" type="date" />
 
+        // Optional image input field
         <label for="image">Image</label>
-        <input id="image" name="image" type="text" placeholder="image filename or URL" />
+        <input
+          id="image"
+          name="image"
+          type="text"
+          placeholder="image filename or URL"
+        />
 
-        <button type="submit">Update Plant</button>
+        <div
+          class="form-actions"
+          style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px"
+        >
+          <button type="submit" class="primary-btn">Save Changes</button>
+          <button type="button" id="back-to-garden" class="secondary-btn">
+            Back to your Garden
+          </button>
+        </div>
       </form>
 
       <div id="message" class="message"></div>
-      <pre id="result" class="message" style="white-space: pre-wrap;"></pre>
+      <pre id="result" class="message" style="white-space: pre-wrap"></pre>
     </div>
 
+    // JavaScript for handling form submission and API requests // This handles
+    fetching plant details, updating plant information, and displaying messages
     <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryPlantId = Number(urlParams.get("plant_id"));
+      const token = localStorage.getItem("token");
+
+      const viewIdInput = document.querySelector("#view_plant_id");
+      const viewBtn = document.querySelector("#btn-view");
+      const deleteBtn = document.querySelector("#btn-delete");
+      const detailsBox = document.querySelector("#plant-details");
+      const detailsPre = document.querySelector("#plant-details-pre");
+
+      const plantIdInput = document.querySelector("#plant_id");
+      const customNameInput = document.querySelector("#custom_name");
+      const locationInput = document.querySelector("#location");
+      const lastWateredInput = document.querySelector("#last_watered");
+      const imageInput = document.querySelector("#image");
       const form = document.querySelector("#update-plant-form");
+      const backButton = document.querySelector("#back-to-garden");
       const messageBox = document.querySelector("#message");
       const resultBox = document.querySelector("#result");
 
+      // Function to generate authorization headers for API requests
+      function authHeaders() {
+        return {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
+      }
+
+      function showDetails(message) {
+        detailsBox.style.display = "block";
+        detailsPre.textContent = message;
+      }
+
+      function showMessage(text, isError = false) {
+        messageBox.className = `message ${isError ? "error" : "success"}`;
+        messageBox.textContent = text;
+        messageBox.style.display = "block";
+      }
+
+      function clearMessage() {
+        messageBox.style.display = "none";
+      }
+
+      async function fetchPlantDetails(id) {
+        const response = await fetch(`/user-plants/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const body = await response.json().catch(() => null);
+        if (!response.ok) {
+          throw new Error(body?.error || `Status ${response.status}`);
+        }
+
+        return body;
+      }
+
+      // Function to load plant details and populate the form fields
+      async function loadPlantDetails(id) {
+        try {
+          showDetails("Loading plant details...");
+          const plant = await fetchPlantDetails(id);
+          showDetails(JSON.stringify(plant, null, 2));
+          plantIdInput.value = plant.id;
+          customNameInput.value = plant.custom_name || "";
+          locationInput.value = plant.location || "";
+          lastWateredInput.value = plant.last_watered
+            ? new Date(plant.last_watered).toISOString().slice(0, 10)
+            : "";
+          imageInput.value = plant.image || "";
+        } catch (error) {
+          showDetails(`Unable to load plant details: ${error.message}`);
+        }
+      }
+
+      // Handle view button click to fetch and display plant details
+      viewBtn.addEventListener("click", async () => {
+        const id = Number(viewIdInput.value);
+        if (!id) {
+          showDetails("Please enter a valid plant id.");
+          return;
+        }
+
+        await loadPlantDetails(id);
+      });
+
+      // Handle delete button click to remove a plant by id
+      deleteBtn.addEventListener("click", async () => {
+        const id = Number(viewIdInput.value);
+        if (!id) {
+          showDetails("Enter a valid plant id to delete.");
+          return;
+        }
+        if (!confirm("This is a permanent. Proceed?")) return;
+
+        try {
+          const response = await fetch(`/user-plants/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await response.json().catch(() => ({}));
+          showDetails(
+            `Status: ${response.status}\n${JSON.stringify(data, null, 2)}`,
+          );
+        } catch (err) {
+          showDetails(`Delete failed: ${err}`);
+        }
+      });
+
+      // Handle form submission for updating plant details
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
+        clearMessage();
 
-        const plantId = Number(document.querySelector("#plant_id").value);
-        const customName = document.querySelector("#custom_name").value;
-        const location = document.querySelector("#location").value;
-        const lastWatered = document.querySelector("#last_watered").value;
-        const image = document.querySelector("#image").value;
-
+        const plantId = Number(plantIdInput.value);
         const payload = {};
-        if (customName) payload.custom_name = customName;
-        if (location) payload.location = location;
-        if (lastWatered) payload.last_watered = lastWatered;
-        if (image) payload.image = image;
+        if (customNameInput.value) payload.custom_name = customNameInput.value;
+        if (locationInput.value) payload.location = locationInput.value;
+        if (lastWateredInput.value)
+          payload.last_watered = lastWateredInput.value;
+        if (imageInput.value) payload.image = imageInput.value;
 
-        if (Object.keys(payload).length === 0) {
-          messageBox.className = "message error";
-          messageBox.textContent = "Please enter at least one field to update.";
-          messageBox.style.display = "block";
+        if (!plantId || Object.keys(payload).length === 0) {
+          showMessage(
+            "Please provide a valid plant ID and at least one entry to update.",
+            true,
+          );
           return;
         }
 
         try {
           const response = await fetch(`/user-plants/${plantId}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders(),
             body: JSON.stringify(payload),
           });
 
-          const data = await response.json();
-
+          // Handle the response and display appropriate messages
+          const data = await response.json().catch(() => null);
           if (response.ok) {
-            messageBox.className = "message success";
-            messageBox.textContent = "Plant updated successfully.";
-            messageBox.style.display = "block";
+            showMessage("Plant updated successfully.");
             resultBox.textContent = JSON.stringify(data, null, 2);
+            await loadPlantDetails(plantId);
           } else {
-            messageBox.className = "message error";
-            messageBox.textContent = data.error || "Failed to update plant.";
-            messageBox.style.display = "block";
+            showMessage(
+              data?.error || `Update failed with status ${response.status}.`,
+              true,
+            );
             resultBox.textContent = JSON.stringify(data, null, 2);
           }
         } catch (error) {
-          messageBox.className = "message error";
-          messageBox.textContent = "Unable to send the update request.";
-          messageBox.style.display = "block";
-          resultBox.textContent = String(error);
+          showMessage(
+            `Unable to send the update request: ${error.message}`,
+            true,
+          );
         }
       });
+
+      // Back button to return to the user plants page
+      backButton.addEventListener("click", () => {
+        window.location.href = "/user-plants.html";
+      });
+
+      // If plant ID is provided load in its details automatically
+      if (!token) {
+        window.location.href = "/login.html";
+      } else if (queryPlantId) {
+        viewIdInput.value = queryPlantId;
+        plantIdInput.value = queryPlantId;
+        loadPlantDetails(queryPlantId);
+      } else {
+        showDetails("Enter a plant ID to view or update.");
+      }
     </script>
   </body>
 </html>
