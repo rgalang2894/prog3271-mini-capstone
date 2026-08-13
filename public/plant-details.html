@@ -57,6 +57,9 @@
           <div id="plant-detail-card" class="plant-detail-card">
             <div class="plant-detail-image-wrapper">
               <img
+                width="300"
+                ,
+                height="300"
                 id="plant-image"
                 class="plant-detail-image"
                 src="/assets/images/placeholder.jpg"
@@ -112,9 +115,8 @@
       </main>
     </div>
 
-    // Similar script to update-user-plant.html for fetching and displaying
-    plant details (had to do it in this way or else it wouldn't work)
     <script>
+      // Similar script to update-user-plant.html for fetching and displaying plant details (had to do it in this way or else it wouldn't work)
       const urlParams = new URLSearchParams(window.location.search);
       const plantId = urlParams.get("plant_id");
       const token = localStorage.getItem("token");

@@ -1,5 +1,3 @@
-// HTML page for updating a users plant. Can be accessed from the
-user-plants.html page.
 <!doctype html>
 <html lang="en">
   <head>
@@ -86,9 +84,10 @@ user-plants.html page.
       <pre id="result" class="message" style="white-space: pre-wrap"></pre>
     </div>
 
-    // JavaScript for handling form submission and API requests // This handles
-    fetching plant details, updating plant information, and displaying messages
     <script>
+      // JavaScript for handling form submission and API requests
+      // This handles fetching plant details, updating plant information, and displaying messages
+
       const urlParams = new URLSearchParams(window.location.search);
       const queryPlantId = Number(urlParams.get("plant_id"));
       const token = localStorage.getItem("token");
@@ -181,7 +180,7 @@ user-plants.html page.
           showDetails("Enter a valid plant id to delete.");
           return;
         }
-        if (!confirm("This is a permanent. Proceed?")) return;
+        if (!confirm("This is permanent. Proceed?")) return;
 
         try {
           const response = await fetch(`/user-plants/${id}`, {

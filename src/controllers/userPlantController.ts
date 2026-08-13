@@ -132,6 +132,7 @@ export const editUserPlant = async (req: Request, res: Response) => {
   }
 };
 
+// Delete function that's used in the userPlantRoutes.ts file to delete a plant by id (can be tested in the edit plant page)
 export const deleteUserPlantById = async (req: Request, res: Response) => {
   try {
     const authenticatedUserId = req.user?.id;
