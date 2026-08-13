@@ -7,6 +7,12 @@
     <title>Sproutly - Plant Details</title>
     <link rel="stylesheet" href="/stylesheets/dashboard.css" />
     <link rel="stylesheet" href="/stylesheets/user-plants.css" />
+        <script>
+      const initialToken = localStorage.getItem("token");
+      if (!initialToken) {
+        window.location.replace("/login.html");
+      }
+    </script>
   </head>
   <body>
     <div class="dashboard-layout">

@@ -11,7 +11,7 @@ const pool = promise_1.default.createPool({
     host: "localhost", // where MySQL is running
     port: 3306, // the default MySQL port
     user: "root", // your MySQL username
-    password: "", // your MySQL password
+    password: "0nomatopoeiA;", // your MySQL password
     database: "sproutly_app_db", // the database we created above
 });
 // Export the pool so other files can import it:

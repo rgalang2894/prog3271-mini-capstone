@@ -18,13 +18,22 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(publicDir));
 app.get("/add-user-plant", auth_1.default, (_req, res) => {
-    res.sendFile(path_1.default.join(publicDir, "user-plants.html"));
+    res.sendFile(path_1.default.join(publicDir, "add-user-plants.html"));
 });
 app.get("/update-user-plant", auth_1.default, (_req, res) => {
     res.sendFile(path_1.default.join(publicDir, "update-user-plant.html"));
 });
-app.get("/dashboard", auth_1.default, (_req, res) => {
+app.get("/dashboard.html", auth_1.default, (_req, res) => {
     res.sendFile(path_1.default.join(publicDir, "dashboard.html"));
+});
+app.get("/user-plants.html", auth_1.default, (_req, res) => {
+    res.sendFile(path_1.default.join(publicDir, "user-plants.html"));
+});
+app.get("/reminders.html", auth_1.default, (_req, res) => {
+    res.sendFile(path_1.default.join(publicDir, "reminders.html"));
+});
+app.get("/profile.html", auth_1.default, (_req, res) => {
+    res.sendFile(path_1.default.join(publicDir, "profile.html"));
 });
 app.use("/users", userRoutes_1.default);
 app.use("/user-plants", auth_1.default, userPlantRoutes_1.default);

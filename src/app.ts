@@ -19,15 +19,27 @@ app.use(express.static(publicDir));
 
 
 app.get("/add-user-plant", authenticateToken, (_req, res) => {
-  res.sendFile(path.join(publicDir, "user-plants.html"));
+  res.sendFile(path.join(publicDir, "add-user-plants.html"));
 });
 
 app.get("/update-user-plant", authenticateToken, (_req, res) => {
   res.sendFile(path.join(publicDir, "update-user-plant.html"));
 });
 
-app.get("/dashboard", authenticateToken, (_req, res) => {
+app.get("/dashboard.html", authenticateToken, (_req, res) => {
   res.sendFile(path.join(publicDir, "dashboard.html"));
+});
+
+app.get("/user-plants.html", authenticateToken, (_req, res) => {
+  res.sendFile(path.join(publicDir, "user-plants.html"));
+});
+
+app.get("/reminders.html", authenticateToken, (_req, res) => {
+  res.sendFile(path.join(publicDir, "reminders.html"));
+});
+
+app.get("/profile.html", authenticateToken, (_req, res) => {
+  res.sendFile(path.join(publicDir, "profile.html"));
 });
 
 app.use("/users", userRoutes);
