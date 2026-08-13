@@ -76,92 +76,21 @@
               <span>Email</span>
               <strong id="summaryEmail">—</strong>
             </div>
-            <div class="profile-info-row">
-              <span>Member Since</span>
-              <strong id="memberSince">—</strong>
-            </div>
           </div>
         </div>
 
-        <div class="profile-settings">
-          <div class="profile-card profile-section">
-            <div class="profile-section-header">
-              <h2>Account Information</h2>
-              <p>Update the information associated with your Sproutly account.</p>
-            </div>
 
-            <form id="profileForm" class="profile-form">
-              <div class="profile-field">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required>
-              </div>
-
-              <div class="profile-field">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
-              </div>
-
-              <div id="profileMessage" class="profile-message"></div>
-
-              <div class="profile-actions">
-                <button type="button" class="profile-button secondary" id="cancelButton">Cancel</button>
-                <button type="submit" class="profile-button primary">Save Changes</button>
-              </div>
-            </form>
-          </div>
-
-          <div class="profile-card profile-section profile-security">
-            <div class="profile-section-header">
-              <div class="security-title">
-                <div class="security-icon">🔒</div>
-                <div>
-                  <h2>Password & Security</h2>
-                  <p>Keep your account secure by regularly updating your password.</p>
-                </div>
-              </div>
-            </div>
-
-            <form id="passwordForm" class="profile-form">
-              <div class="profile-field">
-                <label for="currentPassword">Current Password</label>
-                <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password">
-              </div>
-
-              <div class="profile-field">
-                <label for="newPassword">New Password</label>
-                <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password">
-              </div>
-
-              <div class="profile-field">
-                <label for="confirmPassword">Confirm New Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
-              </div>
-
-              <div id="passwordMessage" class="profile-message"></div>
-
-              <div class="profile-actions">
-                <button type="submit" class="profile-button primary">Update Password</button>
-              </div>
-            </form>
-          </div>
-        </div>
       </section>
     </main>
   </div>
 
   <script>
-    const profileForm = document.getElementById("profileForm");
-    const passwordForm = document.getElementById("passwordForm");
-    const cancelButton = document.getElementById("cancelButton");
     const profilePhoto = document.getElementById("profilePhoto");
 
     const displayUsername = document.getElementById("displayUsername");
     const displayEmail = document.getElementById("displayEmail");
     const summaryUsername = document.getElementById("summaryUsername");
     const summaryEmail = document.getElementById("summaryEmail");
-    const memberSince = document.getElementById("memberSince");
-    const usernameInput = document.getElementById("username");
-    const emailInput = document.getElementById("email");
     const avatarInitial = document.getElementById("avatarInitial");
     const profileImage = document.getElementById("profileImage");
     const logout = () => {
@@ -183,9 +112,6 @@
       displayEmail.textContent = email;
       summaryUsername.textContent = name;
       summaryEmail.textContent = email;
-      usernameInput.value = name;
-      emailInput.value = email;
-      memberSince.textContent = "Member since data unavailable";
       avatarInitial.textContent = name.trim().charAt(0).toUpperCase();
       profileImage.style.display = "none";
     }
@@ -198,22 +124,6 @@
       image.src = URL.createObjectURL(file);
       image.style.display = "block";
       initial.style.display = "none";
-    });
-
-    cancelButton.addEventListener("click", function () {
-      document.getElementById("profileMessage").textContent = "";
-    });
-
-    profileForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      const message = document.getElementById("profileMessage");
-      message.textContent = "Profile updates are not available in this version.";
-    });
-
-    passwordForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      const message = document.getElementById("passwordMessage");
-      message.textContent = "Password updates are not available in this version.";
     });
   </script>
 </body>
