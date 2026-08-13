@@ -44,7 +44,8 @@
           </nav>
         </div>
         <div class="footer-note">
-          <a class="logout-btn" href="/login.html">Logout</a>
+          <a class="add-plant" href="/add-user-plants.html">Add New Plant</a>
+          <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
       </aside>
 
@@ -149,7 +150,11 @@
       const reminderCard = document.querySelector("#reminder-card");
       const message = document.querySelector("#reminders-message");
       const plantSelect = document.querySelector("#r_plant_id");
-
+      const logout = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login.html";
+      };
       // Object to map plant IDs to their names for display in reminders
       let plantMap = {};
 

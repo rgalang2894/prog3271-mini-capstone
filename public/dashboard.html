@@ -30,7 +30,7 @@
 
       <div class="footer-note">
         <a class="add-plant" href="/add-user-plants.html">Add New Plant</a>
-        <a class="logout-btn" href="/login.html">Logout</a>
+        <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
     </aside>
 
@@ -48,11 +48,11 @@
           <div class="subtext">Plants in your collection</div>
         </article>
 
-        <article class="card"> <!--STILL STATIC> WAITING FOR THE REMINDERS PAGE-->
+        <article class="card"> 
           <h3>Reminders</h3>
           <div class="value" id="reminder-count">0 pending</div>
           <div class="subtext">Stay on top of watering and feeding.</div>
-        </article> <!--STILL STATIC> WAITING FOR THE REMINDERS PAGE-->
+        </article> 
 
         <article class="card">
           <h3>Plant Photos</h3>
@@ -62,7 +62,7 @@
 
       </section>
 
-      <section class="reminders"> <!--STILL STATIC> WAITING FOR THE REMINDERS PAGE-->
+      <section class="reminders">
         <div class="panel">
           <header>
             <div>
@@ -70,31 +70,10 @@
               <p>Upcoming care tasks for your plants this week.</p>
             </div>
           </header>
-          <ul>
-            <li>
-              <span class="bullet"></span>
-              <div class="item-text">
-                <strong>Water Fern</strong>
-                <p>Check soil moisture in the morning.</p>
-              </div>
-            </li>
-            <li>
-              <span class="bullet"></span>
-              <div class="item-text">
-                <strong>Fertilize Succulent</strong>
-                <p>Apply light nutrient boost this week.</p>
-              </div>
-            </li>
-            <li>
-              <span class="bullet"></span>
-              <div class="item-text">
-                <strong>Rotate Tomato Plant</strong>
-                <p>Turn pot for even sunlight exposure.</p>
-              </div>
-            </li>
+          <ul id="reminders-list">
           </ul>
         </div>
-      </section> <!--STILL STATIC> WAITING FOR THE REMINDERS PAGE-->
+      </section>
 
       <section class="gallery">
         <div class="panel">
@@ -117,17 +96,20 @@
   <script>
     const storedUser = JSON.parse(localStorage.getItem("user") || "null");
     const token = localStorage.getItem("token");
-
     const welcomeName = document.querySelector("#welcome-name");
     const dashboardDate = document.querySelector("#dashboard-date");
     const plantCount = document.querySelector("#plant-count");
     const reminderCount = document.querySelector("#reminder-count");
     const photoCount = document.querySelector("#photo-count");
     const galleryGrid = document.querySelector("#gallery-grid");
-
     const formatDate = (date) => {
       const options = { weekday: "long", month: "long", day: "numeric" };
       return new Intl.DateTimeFormat("en-US", options).format(date);
+    };
+    const logout = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login.html";
     };
 
     if (dashboardDate) {
@@ -154,8 +136,7 @@
           const photoCountValue = photoPlants.length;
 
           plantCount.textContent = String(plantList.length);
-          photoCount.textContent = `${photoCountValue} uploaded`;
-          reminderCount.textContent = `${Math.max(plantList.length, 0)} pending`;
+          photoCount.textContent = `${photoCountValue}`;
 
           if (galleryGrid) {
             galleryGrid.innerHTML = "";
@@ -209,6 +190,49 @@
           plantCount.textContent = "0";
           photoCount.textContent = "0 uploaded";
           reminderCount.textContent = "0 pending";
+        });
+
+      fetch("/reminders", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then((response) => response.json())
+        .then((reminders) => {
+          const remindersList = document.querySelector("#reminders-list");
+          const reminderArray = Array.isArray(reminders) ? reminders : [];
+
+          reminderCount.textContent = `${reminderArray.length}`;
+
+          if (remindersList) {
+            remindersList.innerHTML = "";
+
+            if (reminderArray.length === 0) {
+              const emptyItem = document.createElement("li");
+              emptyItem.textContent = "No reminders at the moment. Keep up the great plant care!";
+              remindersList.appendChild(emptyItem);
+            } else {
+              reminderArray.forEach((reminder) => {
+                const li = document.createElement("li");
+                const plantName = reminder.custom_name || reminder.common_name || "Plant";
+                const reminderType = reminder.reminder_type || "Care";
+                li.innerHTML = `
+                  <span class="bullet"></span>
+                  <div class="item-text">
+                    <strong>${plantName}</strong>
+                    <p>${reminderType} due ${reminder.next_due_date || "soon"}</p>
+                  </div>
+                `;
+                remindersList.appendChild(li);
+              });
+            }
+          }
+        })
+        .catch(() => {
+          const remindersList = document.querySelector("#reminders-list");
+          if (remindersList) {
+            remindersList.innerHTML = "<li>Unable to load reminders.</li>";
+          }
         });
     }
   </script>

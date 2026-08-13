@@ -37,9 +37,7 @@
           <span class="round-icon">?</span> Help
         </a>
 
-        <a class="logout-btn" href="/login.html">
-          <span class="logout-icon">↪</span> Logout
-        </a>
+       <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
     </aside>
 
@@ -166,7 +164,11 @@
     const emailInput = document.getElementById("email");
     const avatarInitial = document.getElementById("avatarInitial");
     const profileImage = document.getElementById("profileImage");
-
+    const logout = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login.html";
+    };
     const token = localStorage.getItem("token");
     const rawUser = localStorage.getItem("user");
     const user = rawUser ? JSON.parse(rawUser) : null;

@@ -47,7 +47,7 @@
 
         <div class="footer-note">
           <a class="add-plant" href="/add-user-plants.html">Add New Plant</a>
-          <a class="logout-btn" href="/login.html">Logout</a>
+          <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
       </aside>
 
@@ -69,10 +69,6 @@
         </section>
 
         <section class="plant-page panel">
-          <!-- <header class="page-header">
-
-
-          </header> -->
           <section class="cards-grid" id="plant-cards">
             <div class="empty-state">
               <p>No plants found yet.</p>
@@ -91,8 +87,14 @@
       const plantCards = document.querySelector("#plant-cards");
       const searchInput = document.querySelector("#search-input");
       const placeholderImage = "/assets/images/placeholder.jpg";
-
       const noMatchMessage = document.createElement("div");
+      const logout = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login.html";
+      };
+
+
       noMatchMessage.className = "empty-state";
       noMatchMessage.style.display = "none";
       noMatchMessage.innerHTML = "<p>No plants matched your search.</p>";
@@ -147,7 +149,7 @@
         detailButton.type = "button";
         detailButton.className = "icon-btn icon-btn--detail";
         detailButton.title = "View details";
-        detailButton.textContent = "ℹ️";
+        detailButton.textContent = "ℹ";
         detailButton.addEventListener("click", () => {
           window.location.href = `/plant-details.html?plant_id=${encodeURIComponent(plant.id)}`;
         });

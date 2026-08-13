@@ -44,7 +44,10 @@
             </ul>
           </nav>
         </div>
-        <a class="logout-btn" href="/login.html">Logout</a>
+        <div class="footer-note">
+          <a class="add-plant" href="/add-user-plants.html">Add New Plant</a>
+          <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
       </aside>
       <main class="main">
         <section class="header">
@@ -68,7 +71,7 @@
             </div>
             <div class="plant-detail-info">
               <div class="detail-row">
-                <strong>Custom Name:</strong>
+                <strong>Plant Name:</strong>
                 <span id="plant-custom-name">-</span>
               </div>
               <div class="detail-row">
@@ -83,14 +86,14 @@
                 <strong>Plant ID:</strong>
                 <span id="plant-id">-</span>
               </div>
-              <div class="detail-row">
+              <!-- <div class="detail-row">
                 <strong>Catalog ID:</strong>
                 <span id="plant-catalog-id">-</span>
               </div>
               <div class="detail-row">
                 <strong>Image URL:</strong>
                 <span id="plant-image-url">-</span>
-              </div>
+              </div> -->
             </div>
           </div>
 
@@ -120,7 +123,11 @@
       const urlParams = new URLSearchParams(window.location.search);
       const plantId = urlParams.get("plant_id");
       const token = localStorage.getItem("token");
-
+      const logout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/login.html";
+      };
       const plantTitle = document.querySelector("#plant-title");
       const plantSubtitle = document.querySelector("#plant-subtitle");
       const plantImage = document.querySelector("#plant-image");
@@ -167,8 +174,8 @@
           ? new Date(plant.last_watered).toLocaleDateString()
           : "Not set";
         plantIdEl.textContent = plant.id || "-";
-        catalogIdEl.textContent = plant.catalog_id || "-";
-        imageUrlEl.textContent = plant.image || "-";
+        // catalogIdEl.textContent = plant.catalog_id || "-";
+        // imageUrlEl.textContent = plant.image || "-";
         plantImage.src = getImageUrl(plant.image);
       }
 

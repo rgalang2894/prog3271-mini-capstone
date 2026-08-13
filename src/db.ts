@@ -7,7 +7,7 @@ const pool = mysql.createPool({
   host: "localhost", // where MySQL is running
   port: 3306, // the default MySQL port
   user: "root", // your MySQL username
-  password: "332547991", // your MySQL password
+  password: "0nomatopoeiA;", // your MySQL password
   database: "sproutly_app_db", // the database we created above
 });
 

@@ -17,8 +17,10 @@ export const findAllReminders = async () => {
 export const findAllRemindersByUserId = async (userId: number) => {
   try {
     const [rows] = await pool.query(
-      `SELECT r.* FROM reminders r
+      `SELECT r.*, up.custom_name, pc.common_name
+       FROM reminders r
        JOIN user_plants up ON up.id = r.user_plant_id
+       LEFT JOIN plant_catalog pc ON up.catalog_id = pc.id
        WHERE up.user_id = ?`,
       [userId],
     );

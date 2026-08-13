@@ -6,14 +6,15 @@ import {
   deleteUserPlantById,
   editUserPlant,
 } from "../controllers/userPlantController";
+import authenticateToken from "../middleware/auth";
 
 const router = Router();
 
-router.get("/", getUserPlants);
-router.get("/:id", getUserPlantById);
-router.post("/", addUserPlant);
-router.put("/:id", editUserPlant);
-router.patch("/:id", editUserPlant);
-router.delete("/:id", deleteUserPlantById);
+router.get("/", authenticateToken, getUserPlants);
+router.get("/:id", authenticateToken, getUserPlantById);
+router.post("/", authenticateToken, addUserPlant);
+router.put("/:id", authenticateToken, editUserPlant);
+router.patch("/:id", authenticateToken, editUserPlant);
+router.delete("/:id", authenticateToken, deleteUserPlantById);
 
 export default router;

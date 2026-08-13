@@ -37,9 +37,7 @@
           <span class="round-icon">?</span> Help
         </a>
 
-        <a class="logout-btn" href="/login.html">
-          <span class="logout-icon">↪</span> Logout
-        </a>
+        <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
     </aside>
 
@@ -103,6 +101,11 @@
     const catalogCount = document.getElementById("catalog-count");
     const alertCount = document.getElementById("alert-count");
     const catalogDate = document.getElementById("catalog-date");
+    const logout = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login.html";
+    };
 
     if (!token) {
       window.location.href = "/login.html";
@@ -162,19 +165,19 @@
       const iconGroup = document.createElement("div");
       iconGroup.className = "card-icon-group";
 
-      const editButton = document.createElement("button");
-      editButton.type = "button";
-      editButton.className = "icon-button";
-      editButton.title = "Edit plant";
-      editButton.textContent = "✎";
+      // const editButton = document.createElement("button");
+      // editButton.type = "button";
+      // editButton.className = "icon-button";
+      // editButton.title = "Edit plant";
+      // editButton.textContent = "✎";
 
-      const deleteButton = document.createElement("button");
-      deleteButton.type = "button";
-      deleteButton.className = "icon-button";
-      deleteButton.title = "Delete plant";
-      deleteButton.textContent = "🗑";
+      // const deleteButton = document.createElement("button");
+      // deleteButton.type = "button";
+      // deleteButton.className = "icon-button";
+      // deleteButton.title = "Delete plant";
+      // deleteButton.textContent = "🗑";
 
-      iconGroup.append(editButton, deleteButton);
+      // iconGroup.append(editButton, deleteButton);
       titleRow.append(title, iconGroup);
 
       const subtitle = document.createElement("p");
