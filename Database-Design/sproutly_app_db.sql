@@ -173,3 +173,134 @@ SELECT * FROM plant_catalog;
 SELECT * FROM user_plants;
 SELECT * FROM reminders;
 SELECT * FROM favorites;
+
+ALTER TABLE plant_catalog
+ADD UNIQUE INDEX uq_plant_catalog_common_name (common_name);
+INSERT INTO plant_catalog
+    (common_name, scientific_name, description, watering_guide, sunlight_req, image_url)
+VALUES
+(
+    'Snake Plant',
+    'Dracaena trifasciata',
+    'A hardy indoor plant known for its upright leaves and ability to tolerate low light.',
+    'Water when the soil is completely dry. Avoid overwatering.',
+    'Low to bright indirect',
+    'https://images.unsplash.com/photo-1593482892290-f54927ae2e04'
+),
+(
+    'Peace Lily',
+    'Spathiphyllum',
+    'A popular indoor plant with dark green leaves and elegant white flowers.',
+    'Water when the top 1 inch of soil feels dry. Keep the soil slightly moist.',
+    'Bright indirect',
+    'https://images.unsplash.com/photo-1593691509543-c55fb32e5cee'
+),
+(
+    'Monstera',
+    'Monstera deliciosa',
+    'A tropical houseplant recognized by its large leaves with natural splits and holes.',
+    'Water when the top 2 inches of soil are dry. Reduce watering during cooler months.',
+    'Bright indirect',
+    'https://images.unsplash.com/photo-1614594975525-e45190c55d0b'
+),
+(
+    'Spider Plant',
+    'Chlorophytum comosum',
+    'An easy-to-grow houseplant that produces long leaves and small plantlets.',
+    'Water when the top inch of soil becomes dry. Avoid leaving the roots in standing water.',
+    'Bright indirect',
+    'https://images.unsplash.com/photo-1572688484438-313a6e50c333'
+),
+(
+    'Pothos',
+    'Epipremnum aureum',
+    'A fast-growing trailing plant that is popular for shelves, hanging baskets, and indoor spaces.',
+    'Water when the top 1–2 inches of soil are dry.',
+    'Low to bright indirect',
+    'https://images.unsplash.com/photo-1614594576655-5c7c0e7e1a89'
+),
+(
+    'Aloe Vera',
+    'Aloe barbadensis miller',
+    'A succulent plant with thick leaves that store water and require relatively little maintenance.',
+    'Allow the soil to dry completely between waterings.',
+    'Bright direct',
+    'https://images.unsplash.com/photo-1509423350716-97f9360b4e09'
+),
+(
+    'Rubber Plant',
+    'Ficus elastica',
+    'A decorative indoor tree with large, glossy leaves that can grow well in bright indoor spaces.',
+    'Water when the top 1–2 inches of soil are dry. Do not keep the soil waterlogged.',
+    'Bright indirect',
+    'https://images.unsplash.com/photo-1509423350716-97f9360b4e09'
+),
+(
+    'ZZ Plant',
+    'Zamioculcas zamiifolia',
+    'A low-maintenance plant with glossy leaves that can tolerate periods of drought.',
+    'Allow the soil to dry completely before watering again.',
+    'Low to bright indirect',
+    'https://images.unsplash.com/photo-1632207691144-7e710d7c0c7e'
+),
+(
+    'Fiddle Leaf Fig',
+    'Ficus lyrata',
+    'A popular decorative plant with large violin-shaped leaves.',
+    'Water when the top 2–3 inches of soil are dry. Avoid excessive watering.',
+    'Bright indirect',
+    'https://images.unsplash.com/photo-1597055181300-ae627a1c2c6c'
+),
+(
+    'Boston Fern',
+    'Nephrolepis exaltata',
+    'A lush fern with arching fronds that prefers humid environments.',
+    'Keep the soil consistently moist but not waterlogged. Do not allow it to dry out completely.',
+    'Indirect',
+    'https://images.unsplash.com/photo-1596724878582-76c8e20e3d0e'
+),
+(
+    'Lavender',
+    'Lavandula angustifolia',
+    'A fragrant flowering plant known for its purple flowers and distinctive aroma.',
+    'Allow the soil to dry between waterings. Avoid excessive moisture.',
+    'Full sun',
+    'https://images.unsplash.com/photo-1499002238440-d264edd596ec'
+),
+(
+    'Basil',
+    'Ocimum basilicum',
+    'A popular culinary herb with fragrant leaves that grows well in warm, sunny conditions.',
+    'Water when the top inch of soil feels dry. Keep the soil evenly moist.',
+    'Full sun',
+    'https://images.unsplash.com/photo-1618375569909-3c8616cf7733'
+),
+(
+    'Rosemary',
+    'Salvia rosmarinus',
+    'A fragrant herb with needle-like leaves commonly used in cooking.',
+    'Allow the soil to dry between waterings. Avoid overwatering.',
+    'Full sun',
+    'https://images.unsplash.com/photo-1515586000433-45406d8e6662'
+),
+(
+    'Jade Plant',
+    'Crassula ovata',
+    'A small succulent with thick leaves that stores water and can live for many years.',
+    'Allow the soil to dry completely before watering.',
+    'Bright direct',
+    'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc'
+),
+(
+    'Calathea',
+    'Calathea orbifolia',
+    'A tropical houseplant known for its large patterned leaves and preference for humid environments.',
+    'Keep the soil lightly moist but never waterlogged. Avoid letting it dry completely.',
+    'Bright indirect',
+    'https://images.unsplash.com/photo-1616763355548-1b606f439f86'
+)
+ON DUPLICATE KEY UPDATE
+  description = VALUES(description),
+  watering_guide = VALUES(watering_guide),
+  sunlight_req = VALUES(sunlight_req),
+  image_url = VALUES(image_url);
