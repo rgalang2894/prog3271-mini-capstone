@@ -17,8 +17,8 @@ const authenticateToken = (req, res, next) => {
         return res.status(500).json({ message: "JWT_SECRET is not configured." });
     }
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, secret);
-        req.user = decoded;
+        const decodedUser = jsonwebtoken_1.default.verify(token, secret);
+        req.user = decodedUser;
         next();
     }
     catch {

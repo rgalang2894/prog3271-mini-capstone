@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserPlant = exports.createUserPlant = exports.findUserPlantsByUserId = exports.findAllUserPlants = void 0;
+exports.deleteUserPlant = exports.updateUserPlant = exports.createUserPlant = exports.findUserPlantById = exports.findUserPlantsByUserId = exports.findAllUserPlants = void 0;
 const db_1 = __importDefault(require("../db"));
 const createDbError = (message, error) => {
     const detail = error instanceof Error ? error.message : String(error);
@@ -29,13 +29,30 @@ const findUserPlantsByUserId = async (userId) => {
     }
 };
 exports.findUserPlantsByUserId = findUserPlantsByUserId;
+const findUserPlantById = async (userId, plantId) => {
+    try {
+        const [rows] = await db_1.default.query("SELECT * FROM user_plants WHERE id = ? AND user_id = ?", [plantId, userId]);
+        return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
+    }
+    catch (error) {
+        throw createDbError("Failed to fetch user plant by ID", error);
+    }
+};
+exports.findUserPlantById = findUserPlantById;
 const createUserPlant = async (payload) => {
     const { user_id, catalog_id, custom_name, location, last_watered, image } = payload;
     if (!user_id || !custom_name) {
         throw new Error("user_id and custom_name are required to create a user plant");
     }
     try {
-        const [result] = await db_1.default.query("INSERT INTO user_plants (user_id, catalog_id, custom_name, location, last_watered, image) VALUES (?, ?, ?, ?, ?, ?)", [user_id, catalog_id ?? null, custom_name, location ?? null, last_watered ?? null, image ?? null]);
+        const [result] = await db_1.default.query("INSERT INTO user_plants (user_id, catalog_id, custom_name, location, last_watered, image) VALUES (?, ?, ?, ?, ?, ?)", [
+            user_id,
+            catalog_id ?? null,
+            custom_name,
+            location ?? null,
+            last_watered ?? null,
+            image ?? null,
+        ]);
         return {
             id: result.insertId,
             user_id,
@@ -70,4 +87,14 @@ const updateUserPlant = async (id, payload) => {
     }
 };
 exports.updateUserPlant = updateUserPlant;
+const deleteUserPlant = async (userId, plantId) => {
+    try {
+        const [result] = await db_1.default.query("DELETE FROM user_plants WHERE id = ? AND user_id = ?", [plantId, userId]);
+        return result.affectedRows > 0;
+    }
+    catch (error) {
+        throw createDbError("Failed to delete user plant", error);
+    }
+};
+exports.deleteUserPlant = deleteUserPlant;
 //# sourceMappingURL=userPlantModel.js.map

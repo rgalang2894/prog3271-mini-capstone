@@ -17,11 +17,14 @@ const publicDir = path_1.default.resolve(__dirname, "..", "public");
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(publicDir));
-app.get("/add-user-plant", (_req, res) => {
+app.get("/add-user-plant", auth_1.default, (_req, res) => {
     res.sendFile(path_1.default.join(publicDir, "user-plants.html"));
 });
-app.get("/update-user-plant", (_req, res) => {
+app.get("/update-user-plant", auth_1.default, (_req, res) => {
     res.sendFile(path_1.default.join(publicDir, "update-user-plant.html"));
+});
+app.get("/dashboard", auth_1.default, (_req, res) => {
+    res.sendFile(path_1.default.join(publicDir, "dashboard.html"));
 });
 app.use("/users", userRoutes_1.default);
 app.use("/user-plants", auth_1.default, userPlantRoutes_1.default);

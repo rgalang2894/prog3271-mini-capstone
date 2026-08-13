@@ -9,7 +9,7 @@ const promise_1 = __importDefault(require("mysql2/promise"));
 // This is more efficient than opening a new connection for every query.
 const pool = promise_1.default.createPool({
     host: "localhost", // where MySQL is running
-    port: 3306,
+    port: 3306, // the default MySQL port
     user: "root", // your MySQL username
     password: "", // your MySQL password
     database: "sproutly_app_db", // the database we created above

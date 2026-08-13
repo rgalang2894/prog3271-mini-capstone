@@ -1,1 +1,1 @@
-{"version":3,"file":"reminderModel.d.ts","sourceRoot":"","sources":["../../src/models/reminderModel.ts"],"names":[],"mappings":"AAEA,eAAO,MAAM,gBAAgB,6CAQ5B,CAAC"}
+{"version":3,"file":"reminderModel.d.ts","sourceRoot":"","sources":["../../src/models/reminderModel.ts"],"names":[],"mappings":"AAOA,eAAO,MAAM,gBAAgB,6CAO5B,CAAC;AAEF,eAAO,MAAM,wBAAwB,GAAU,QAAQ,MAAM,0CAc5D,CAAC;AAEF,eAAO,MAAM,cAAc,GAAU,SAAS;IAC5C,aAAa,EAAE,MAAM,CAAC;IACtB,aAAa,EAAE,MAAM,CAAC;IACtB,cAAc,EAAE,MAAM,CAAC;IACvB,aAAa,EAAE,MAAM,CAAC;IACtB,YAAY,CAAC,EAAE,MAAM,CAAC;CACvB;;;;;;;EAsCA,CAAC"}
